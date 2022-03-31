@@ -1,0 +1,32 @@
+{
+  "name": "@gratitude/node",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Yesterday17 <mmf@mmf.moe>",
+  "homepage": "https://github.com/Yesterday17/gratitude#readme",
+  "license": "ISC",
+  "main": "lib/node.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yesterday17/gratitude.git"
+  },
+  "scripts": {
+    "start": "tsc && node ./dist/main.js"
+  },
+  "dependencies": {
+    "express": "^4.17.3"
+  },
+  "devDependencies": {
+    "typescript": "4.6.3",
+    "@types/express": "4.17.13"
+  }
+}

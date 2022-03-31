@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "repository": "https://github.com/Yesterday17/gratitude",
+  "workspaces": [
+    "packages/*"
+  ],
+  "name": "gratitude",
+  "devDependencies": {
+    "lerna": "^4.0.0"
+  }
+}
