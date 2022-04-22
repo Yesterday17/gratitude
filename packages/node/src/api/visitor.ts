@@ -39,7 +39,24 @@ router.post("/list", async (req, res) => {
       };
     }
 
-    // TODO: 列目录
+    // 列目录
+    const files = await fs.readdir(p);
+    const result = files.map(async (file) => {
+      const filePath = path.join(p, file);
+      const stat = await fs.stat(filePath);
+      return {
+        name: file,
+        isFile: stat.isFile(),
+      };
+    });
+
+    res.json({
+      code: 0,
+      data: {
+        name: path.basename(p),
+        files: await Promise.all(result),
+      },
+    });
   } catch (err) {
     res.json(err);
   }

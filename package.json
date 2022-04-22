@@ -1,10 +1,13 @@
 {
   "private": true,
+  "name": "gratitude",
   "repository": "https://github.com/Yesterday17/gratitude",
   "workspaces": [
     "packages/*"
   ],
-  "name": "gratitude",
+  "scripts": {
+    "cloc": "cloc --exclude-dir=node_modules,dist ."
+  },
   "devDependencies": {
     "lerna": "^4.0.0"
   }
