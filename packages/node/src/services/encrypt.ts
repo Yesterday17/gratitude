@@ -15,15 +15,19 @@ export function encrypt(key: string, data: Record<string, any>) {
   return encrypted;
 }
 
-export function decryptText<T>(key: string, data: Buffer): T {
+export function decrypt(key: string, data: Buffer) {
   const iv = data.slice(0, 16);
   const tag = data.slice(16, 32);
   const encrypted = data.slice(32);
   const decipher = crypto.createDecipheriv("aes-256-gcm", md5(key), iv);
   decipher.setAuthTag(tag);
-  const decrypted = Buffer.concat([
-    decipher.update(encrypted),
-    decipher.final(),
-  ]);
-  return JSON.parse(decrypted.toString("utf-8"));
+  return Buffer.concat([decipher.update(encrypted), decipher.final()]);
+}
+
+export function decryptText(key: string, data: Buffer) {
+  return decrypt(key, data).toString("utf-8");
+}
+
+export function decryptJSON(key: string, data: Buffer) {
+  return JSON.parse(decryptText(key, data));
 }

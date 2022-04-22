@@ -3,6 +3,7 @@ import * as path from "path";
 import * as fs from "fs/promises";
 import { VisitorFileListRequest } from "../models/api";
 import { db } from "../services/db";
+import { decryptText, encrypt } from "../services/encrypt";
 
 export const router = express.Router();
 
@@ -19,17 +20,20 @@ async function decryptRequest({ key, path }: VisitorFileListRequest) {
   let password = share.password;
   if (!password) {
     // 没有密码，公开分享，使用默认密码
-    password = "TODO";
+    // TODO: 获取默认密码
+    password = "";
   }
 
-  // TODO: 解密 path
-  return { relativePath: "", share };
+  // 解密 path
+  const relativePath = decryptText(password, Buffer.from(path, "base64"));
+
+  return { relativePath, share, password };
 }
 
 // 访客目录结构展示接口
 router.post("/list", async (req, res) => {
   try {
-    const { relativePath, share } = await decryptRequest(req.body);
+    const { relativePath, share, password } = await decryptRequest(req.body);
     const p = path.join(share.path, relativePath);
     const stat = await fs.stat(p);
     if (!stat.isDirectory()) {
@@ -50,13 +54,15 @@ router.post("/list", async (req, res) => {
       };
     });
 
-    res.json({
-      code: 0,
-      data: {
-        name: path.basename(p),
-        files: await Promise.all(result),
-      },
-    });
+    res.send(
+      encrypt(password, {
+        code: 0,
+        data: {
+          name: path.basename(p),
+          files: await Promise.all(result),
+        },
+      })
+    );
   } catch (err) {
     res.json(err);
   }
@@ -78,6 +84,7 @@ router.get("/file", async (req, res) => {
     }
 
     // TODO: 对文件进行 XOR 加密
+    // stream.pipe(res)
   } catch (err) {
     res.json(err);
   }
