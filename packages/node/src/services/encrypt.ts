@@ -42,12 +42,19 @@ export function encryptStream(key: string, data: Readable): Readable {
 }
 
 export function decrypt(key: string, data: Buffer) {
-  const iv = data.slice(0, 16);
-  const encrypted = data.slice(16, data.length - 16);
-  const tag = data.slice(data.length - 16);
-  const decipher = crypto.createDecipheriv("aes-256-gcm", md5(key), iv);
-  decipher.setAuthTag(tag);
-  return Buffer.concat([decipher.update(encrypted), decipher.final()]);
+  try {
+    const iv = data.slice(0, 16);
+    const encrypted = data.slice(16, data.length - 16);
+    const tag = data.slice(data.length - 16);
+    const decipher = crypto.createDecipheriv("aes-256-gcm", md5(key), iv);
+    decipher.setAuthTag(tag);
+    return Buffer.concat([decipher.update(encrypted), decipher.final()]);
+  } catch {
+    throw {
+      code: "-2",
+      message: "解密失败！",
+    };
+  }
 }
 
 export function decryptText(key: string, data: Buffer) {

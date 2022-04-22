@@ -7,6 +7,13 @@ import { decryptText, encrypt, encryptStream } from "../services/encrypt";
 
 export const router = express.Router();
 
+/**
+ * 解密文件分享请求中的路径
+ *
+ * @param param0 文件 ID 和路径
+ * @returns 解密后内容
+ * @throws 分享不存在或解密错误
+ */
 async function decryptRequest({ key, path }: VisitorFileListRequest) {
   const database = await db;
   const share = await database.getShare(key);
@@ -20,8 +27,7 @@ async function decryptRequest({ key, path }: VisitorFileListRequest) {
   let password = share.password;
   if (!password) {
     // 没有密码，公开分享，使用默认密码
-    // TODO: 获取默认密码
-    password = "";
+    password = await database.getSetting("default_share_key");
   }
 
   // 解密 path

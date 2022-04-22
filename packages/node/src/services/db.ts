@@ -1,5 +1,6 @@
 import { Database as DatabaseDriver } from "sqlite3";
 import { open, Database } from "sqlite";
+import { SettingKey, ShareRow } from "../models/db";
 
 class DatabaseManager {
   private db: Database;
@@ -7,6 +8,7 @@ class DatabaseManager {
   static async init(dbPath: string): Promise<DatabaseManager> {
     const db = await open({ filename: dbPath, driver: DatabaseDriver });
 
+    /////////////////////////////////////////////////////////////////////
     // 网盘信息表
     await db.exec(`
 CREATE TABLE IF NOT EXISTS gr_drives(
@@ -64,6 +66,8 @@ key      TEXT NON NULL,
 value    TEXT NON NULL
 );`);
 
+    /////////////////////////////////////////////////////////////////////
+    // TODO: 检查初始化设置
     return new DatabaseManager(db);
   }
 
@@ -73,6 +77,19 @@ value    TEXT NON NULL
 
   async getShare(key: string): Promise<ShareRow | undefined> {
     return await this.db.get("SELECT * FROM gr_share WHERE key = ?", key);
+  }
+
+  /**
+   * 获取设置项
+   *
+   * @param key 设置项的键
+   * @returns 设置内容
+   */
+  async getSetting(key: SettingKey): Promise<string> {
+    return await this.db.get(
+      "SELECT value FROM gr_settings WHERE key = ?",
+      key
+    );
   }
 }
 
