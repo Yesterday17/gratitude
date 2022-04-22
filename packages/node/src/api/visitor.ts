@@ -3,7 +3,7 @@ import * as path from "path";
 import * as fs from "fs/promises";
 import { VisitorFileListRequest } from "../models/api";
 import { db } from "../services/db";
-import { decryptText, encrypt } from "../services/encrypt";
+import { decryptText, encrypt, encryptStream } from "../services/encrypt";
 
 export const router = express.Router();
 
@@ -71,7 +71,7 @@ router.post("/list", async (req, res) => {
 // 访客文件获取接口
 router.get("/file", async (req, res) => {
   try {
-    const { relativePath, share } = await decryptRequest(
+    const { relativePath, share, password } = await decryptRequest(
       req.params as VisitorFileListRequest
     );
     const p = path.join(share.path, relativePath);
@@ -83,8 +83,10 @@ router.get("/file", async (req, res) => {
       };
     }
 
-    // TODO: 对文件进行 XOR 加密
-    // stream.pipe(res)
+    // 对文件进行加密
+    const file = await fs.open(p, "r");
+    const fileStream = file.createReadStream(/* TODO: range */);
+    encryptStream(password, fileStream).pipe(res);
   } catch (err) {
     res.json(err);
   }
