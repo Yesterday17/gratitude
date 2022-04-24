@@ -3,7 +3,7 @@ import { md5 } from "./hash";
 import { Readable } from "stream";
 
 export function encrypt(key: string, data: Record<string, any>) {
-  const iv = crypto.randomBytes(16);
+  const iv = crypto.randomBytes(12);
   const cipher = crypto.createCipheriv("aes-256-gcm", md5(key), iv);
 
   const text = JSON.stringify(data);
@@ -17,7 +17,7 @@ export function encrypt(key: string, data: Record<string, any>) {
 }
 
 export function encryptStream(key: string, data: Readable): Readable {
-  const iv = crypto.randomBytes(16);
+  const iv = crypto.randomBytes(12);
   const cipher = crypto.createCipheriv("aes-256-gcm", md5(key), iv);
 
   const controller = new Readable({});
@@ -43,8 +43,8 @@ export function encryptStream(key: string, data: Readable): Readable {
 
 export function decrypt(key: string, data: Buffer) {
   try {
-    const iv = data.slice(0, 16);
-    const encrypted = data.slice(16, data.length - 16);
+    const iv = data.slice(0, 12);
+    const encrypted = data.slice(12, data.length - 16);
     const tag = data.slice(data.length - 16);
     const decipher = crypto.createDecipheriv("aes-256-gcm", md5(key), iv);
     decipher.setAuthTag(tag);
