@@ -1,5 +1,6 @@
 import { Database as DatabaseDriver } from "sqlite3";
 import { open, Database } from "sqlite";
+import { check as checkDiskUsage } from "diskusage";
 import { SettingKey, ShareRow } from "../models/db";
 
 class DatabaseManager {
@@ -90,6 +91,11 @@ value    TEXT NON NULL
       "SELECT value FROM gr_settings WHERE key = ?",
       key
     );
+  }
+
+  async addFolder(path: string) {
+    const usage = await checkDiskUsage(path);
+    console.group(usage);
   }
 }
 

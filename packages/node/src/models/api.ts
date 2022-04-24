@@ -6,7 +6,7 @@ export interface SuccessResponse<T> {
 }
 
 export interface FailedResponse {
-  code: number;
+  code: 0;
   message: string;
 }
 
