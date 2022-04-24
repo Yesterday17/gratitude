@@ -7,6 +7,8 @@ import { decryptText, encrypt, encryptStream } from "../services/encrypt";
 
 export const router = express.Router();
 
+// FIXME: share.path 不是绝对路径，需要转换
+
 /**
  * 解密文件分享请求中的路径
  *
