@@ -76,6 +76,7 @@ value    TEXT NON NULL
     this.db = db;
   }
 
+  // 获取分享的行
   async getShare(key: string): Promise<ShareRow | undefined> {
     return await this.db.get("SELECT * FROM gr_share WHERE key = ?", key);
   }
@@ -91,6 +92,15 @@ value    TEXT NON NULL
       "SELECT value FROM gr_settings WHERE key = ?",
       key
     );
+  }
+
+  // 获取 key 对应的密钥
+  async getKeySecret(key: string): Promise<string | undefined> {
+    if (!!key) {
+      return await this.db.get("SELECT secret FROM gr_keys WHERE key = ?", key);
+    } else {
+      return undefined;
+    }
   }
 
   async addFolder(path: string) {

@@ -61,7 +61,7 @@ export function decryptText(key: string, data: Buffer) {
   return decrypt(key, data).toString("utf-8");
 }
 
-export function decryptJSON(key: string, data: Buffer) {
+export function decryptJSON<T>(key: string, data: Buffer): T {
   return JSON.parse(decryptText(key, data));
 }
 
