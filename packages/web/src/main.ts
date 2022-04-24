@@ -10,19 +10,45 @@ import "./style.css";
 import { Global } from "./global";
 import { encryptPath, decryptResponse } from "./utils/encrypt";
 import { fromBase64 } from "@aws-sdk/util-base64-browser";
+import { listFolder } from "./api/list";
 
-document
-  .querySelector("#gr-submit-password")!
-  .addEventListener("click", submitPassword);
+function init() {
+  const hash = window.location.hash;
+  const hashMatch = hash.match(/^#sid=(.+?)(?:&pwd=(.+?))$/);
+  if (hashMatch) {
+    const sid = hashMatch[1];
+    const password = hashMatch[2];
+    Global.shareId = sid;
+    Global.password = password;
+  }
+
+  document
+    .querySelector("#gr-submit-password")!
+    .addEventListener("click", submitPassword);
+
+  // 当有全局密码时，自动提交一次
+  if (Global.password) {
+    const passwordInput =
+      document.querySelector<HTMLInputElement>("#gr-password");
+    passwordInput!.value = Global.password;
+
+    submitPassword();
+  }
+}
+
+init();
 
 async function submitPassword() {
   const passwordInput =
     document.querySelector<HTMLInputElement>("#gr-password");
   const password = passwordInput!.value;
   Global.password = password;
-  // TODO: 校验密码，获取目录
-  const encrypted = await encryptPath("/");
-  console.log(encrypted);
-  const decrypted = await decryptResponse(fromBase64(encrypted));
-  console.log(decrypted);
+
+  try {
+    const folder = listFolder();
+    // TODO: 展示目录内容
+    console.log(folder);
+  } catch (e) {
+    console.error(e);
+  }
 }
