@@ -6,3 +6,18 @@
   color: #2c3e50;
   margin-top: 60px;
 }
+
+html, body {
+  height: 100%;
+}
+
+#password-box {
+  height: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#password-confirm {
+  direction: rtl;
+}

@@ -4,10 +4,51 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
+    <title>分享文件</title>
   </head>
-  <body>
-    <div id="app"></div>
+  <body
+    class="mdui-theme-primary-teal mdui-theme-accent-pink mdui-theme-layout-auto"
+  >
+    <div class="mdui-appbar">
+      <div class="mdui-toolbar mdui-color-theme">
+        <a href="javascript:;" class="mdui-btn mdui-btn-icon">
+          <i class="mdui-icon material-icons">menu</i>
+        </a>
+        <a href="javascript:;" class="mdui-typo-headline">Gratitude</a>
+        <a href="javascript:;" class="mdui-typo-title">文件分享</a>
+        <div class="mdui-toolbar-spacer"></div>
+      </div>
+    </div>
+    <div class="mdui-container" id="password-box">
+      <div class="mdui-card" style="padding: 0.5em">
+        <div class="mdui-card-media">
+          <div class="mdui-card-primary">
+            <div class="mdui-card-primary-title">文件共享</div>
+            <div class="mdui-card-primary-subtitle">
+              系统管理员向你分享了文件，请输入密码以下载。
+            </div>
+            <div class="mdui-card-content">
+              <div class="mdui-textfield">
+                <input
+                  class="mdui-textfield-input"
+                  id="gr-password"
+                  type="text"
+                  placeholder="Password"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mdui-card-actions" id="password-confirm">
+          <button
+            class="mdui-btn mdui-color-theme-accent mdui-ripple"
+            id="gr-submit-password"
+          >
+            确定
+          </button>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
