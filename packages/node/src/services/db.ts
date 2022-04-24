@@ -2,6 +2,7 @@ import { Database as DatabaseDriver } from "sqlite3";
 import { open, Database } from "sqlite";
 import { check as checkDiskUsage } from "diskusage";
 import { DriveRow, KeyRow, SettingKey, ShareRow } from "../models/db";
+import * as bcrypt from "bcrypt";
 import * as crypto from "crypto";
 
 class DatabaseManager {
@@ -95,6 +96,13 @@ value    TEXT NON NULL
     );
   }
 
+  // 校验密码
+  async validatePassword(password: string): Promise<boolean> {
+    const actualPassword = await this.getSetting("password");
+    return bcrypt.compare(password, actualPassword);
+  }
+
+  // 创建登录用户使用的 (key, secret)
   async createKeyPair(): Promise<KeyRow> {
     const key_id = crypto.randomBytes(32).toString("hex");
     const key_secret = crypto.randomBytes(32).toString("hex");

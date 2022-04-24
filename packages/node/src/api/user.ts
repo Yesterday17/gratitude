@@ -43,7 +43,7 @@ router.post("/login", async (req, res) => {
   );
 
   // 2. 校验密码(bcrypt)
-  if (password === "FIXME") {
+  if (await database.validatePassword(password)) {
     // 3. 登录成功，生成新 (key, secret)
     const keyPair = await database.createKeyPair();
     res.send(
