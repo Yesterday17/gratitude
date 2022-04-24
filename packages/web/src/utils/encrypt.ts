@@ -36,5 +36,10 @@ export async function decryptResponse(data: Uint8Array) {
       iv,
     }
   );
+  return decrypted;
+}
+
+export async function decryptResponseString(data: Uint8Array) {
+  const decrypted = await decryptResponse(data);
   return decoder.decode(decrypted);
 }

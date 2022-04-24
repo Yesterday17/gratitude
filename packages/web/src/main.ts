@@ -45,10 +45,10 @@ async function submitPassword() {
   Global.password = password;
 
   try {
-    const folder = listFolder();
+    const folder = await listFolder();
     // TODO: 展示目录内容
     console.log(folder);
   } catch (e) {
-    console.error(e);
+    alert(e);
   }
 }

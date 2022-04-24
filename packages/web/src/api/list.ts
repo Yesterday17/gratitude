@@ -1,5 +1,6 @@
 import { Global } from "../global";
-import { decryptResponse, encryptPath } from "../utils/encrypt";
+import { encryptPath } from "../utils/encrypt";
+import { handleResponse } from "./common";
 
 interface ListFolderResponse {
   name: string;
@@ -18,13 +19,11 @@ export async function listFolder(): Promise<ListFolderResponse> {
     path: await encryptPath(Global.path),
   };
 
-  const responseBuffer = await fetch("list", {
+  return await fetch("list", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
-  }).then((r) => r.arrayBuffer());
-  const response = await decryptResponse(new Uint8Array(responseBuffer));
-  return JSON.parse(response);
+  }).then(handleResponse(false));
 }
