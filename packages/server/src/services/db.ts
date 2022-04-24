@@ -54,6 +54,14 @@ files     TEXT,
 FOREIGN KEY("drive_id") REFERENCES "gr_drives"("id")
 );`);
 
+    // 前缀信息表
+    await db.run(`
+CREATE TABLE IF NOT EXISTS gr_share_prefix(
+  id        INTEGER PRIMARY KEY AUTOINCREMENT,
+  key       TEXT NON NULL,
+  prefix    TEXT NON NULL
+`);
+
     // 密钥信息表
     await db.run(`
 CREATE TABLE IF NOT EXISTS gr_keys(
@@ -155,6 +163,22 @@ value    TEXT NON NULL
   // 删除分享
   async deleteShare(key: string): Promise<void> {
     await this.db.run("DELETE FROM gr_share WHERE key = ?", key);
+  }
+
+  // 获取分享的前缀
+  async getSharePrefix(key: string): Promise<string | undefined> {
+    return await this.db.get(
+      "SELECT prefix FROM gr_share_prefix WHERE key = ?",
+      key
+    );
+  }
+
+  // 获取所有去重后的已用前缀
+  async getAllSharePrefix(): Promise<string[]> {
+    const rows = await this.db.all(
+      "SELECT DISTINCT prefix FROM gr_share_prefix"
+    );
+    return rows.map((row) => row.prefix);
   }
 
   async getDrives(): Promise<DriveRow[]> {

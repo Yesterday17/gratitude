@@ -3,6 +3,7 @@ import { db } from "../services/db";
 import { decryptRSA, encrypt } from "../services/encrypt";
 
 export const router = express.Router();
+
 router.get("/info", async (req, res) => {
   const database = await db;
 
@@ -62,3 +63,5 @@ router.post("/login", async (req, res) => {
     );
   }
 });
+
+// TODO: webdav

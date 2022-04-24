@@ -1,20 +1,18 @@
 import * as express from "express";
-import { v2 as webdav } from "webdav-server";
 import { router as visitorRouter } from "./api/visitor";
+import { router as userRouter } from "./api/user";
+import { db } from "./services/db";
 
-const app = express();
-app.use(express.raw());
-app.use(express.json());
+async function main() {
+  const app = express();
+  app.use(express.raw());
+  app.use(express.json());
 
-const server = new webdav.WebDAVServer();
+  const database = await db;
+  // TODO: 根据 visitor prefix 分发路由
+  app.use("/visitor", visitorRouter);
+  // 用户路由
+  app.use(await database.getSetting("user_prefix"), userRouter);
 
-app.use("/visitor", visitorRouter);
-
-// https://github.com/OpenMarshal/npm-WebDAV-Server/issues/23
-// app.all("/folder/*", (req, res) => {
-//   // req.path = req.path.substring("/folder".length);
-//   server.executeRequest(req, res, "/tmp/test");
-// });
-app.use(webdav.extensions.express("/tmp/test", server));
-
-app.listen(3010);
+  app.listen(3010);
+}

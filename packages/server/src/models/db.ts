@@ -13,7 +13,8 @@ export type SettingKey =
   | "listen"
   | "default_share_key"
   | "info_pub_key"
-  | "info_pri_key";
+  | "info_pri_key"
+  | "user_prefix";
 
 export interface KeyRow {
   key_id: string;
