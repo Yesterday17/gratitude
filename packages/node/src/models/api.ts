@@ -1,7 +1,13 @@
-export interface Response<T> {
+export type Response<T> = SuccessResponse<T> | FailedResponse;
+
+export interface SuccessResponse<T> {
   code: number;
-  message?: string;
-  data?: T;
+  data: T;
+}
+
+export interface FailedResponse {
+  code: number;
+  message: string;
 }
 
 export interface SiteInfoResponse {

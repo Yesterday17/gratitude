@@ -8,7 +8,8 @@ import "./style.css";
 
 // 导入
 import { Global } from "./global";
-import { encryptPath } from "./utils/encrypt";
+import { encryptPath, decryptResponse } from "./utils/encrypt";
+import { fromBase64 } from "@aws-sdk/util-base64-browser";
 
 document
   .querySelector("#gr-submit-password")!
@@ -22,4 +23,6 @@ async function submitPassword() {
   // TODO: 校验密码，获取目录
   const encrypted = await encryptPath("/");
   console.log(encrypted);
+  const decrypted = await decryptResponse(fromBase64(encrypted));
+  console.log(decrypted);
 }
