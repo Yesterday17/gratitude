@@ -18,15 +18,15 @@ router.get("/info", async (req, res) => {
       },
     });
   } else {
-    // TODO: 已登录，返回基本信息
+    // 已登录，返回基本信息
     res.json({
       code: 0,
       data: {
         isLogin: true,
-        salt: "123",
-        drives: [],
-        partitions: [],
-        disks: [],
+        salt: "123", // TODO: 这个 salt 可能没什么用
+        drives: await database.getDrives(),
+        partitions: await database.getPartitions(),
+        disks: await database.getDisks(),
       },
     });
   }

@@ -1,7 +1,7 @@
 import { Database as DatabaseDriver } from "sqlite3";
 import { open, Database } from "sqlite";
 import { check as checkDiskUsage } from "diskusage";
-import { SettingKey, ShareRow } from "../models/db";
+import { DriveRow, SettingKey, ShareRow } from "../models/db";
 
 class DatabaseManager {
   private db: Database;
@@ -101,6 +101,18 @@ value    TEXT NON NULL
     } else {
       return undefined;
     }
+  }
+
+  async getDrives(): Promise<DriveRow[]> {
+    return await this.db.all("SELECT * FROM gr_drives");
+  }
+
+  async getPartitions(): Promise<DriveRow[]> {
+    return await this.db.all("SELECT * FROM gr_partitions");
+  }
+
+  async getDisks(): Promise<DriveRow[]> {
+    return await this.db.all("SELECT * FROM gr_disks");
   }
 
   async addFolder(path: string) {

@@ -14,3 +14,23 @@ export type SettingKey =
   | "default_share_key"
   | "info_pub_key"
   | "info_pri_key";
+
+export interface DriveRow {
+  id: number;
+  name: string;
+  root: string;
+  partition: number;
+}
+
+export interface PartitionRow {
+  id: number;
+  name: string;
+  real_id: string;
+  disk: number;
+}
+
+export interface DiskRow {
+  id: number;
+  type: number;
+  real_id: string;
+}
