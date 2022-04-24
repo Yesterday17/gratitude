@@ -15,6 +15,11 @@ export type SettingKey =
   | "info_pub_key"
   | "info_pri_key";
 
+export interface KeyRow {
+  key_id: string;
+  key_secret: string;
+}
+
 export interface DriveRow {
   id: number;
   name: string;

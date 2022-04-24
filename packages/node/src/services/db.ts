@@ -1,7 +1,8 @@
 import { Database as DatabaseDriver } from "sqlite3";
 import { open, Database } from "sqlite";
 import { check as checkDiskUsage } from "diskusage";
-import { DriveRow, SettingKey, ShareRow } from "../models/db";
+import { DriveRow, KeyRow, SettingKey, ShareRow } from "../models/db";
+import * as crypto from "crypto";
 
 class DatabaseManager {
   private db: Database;
@@ -92,6 +93,16 @@ value    TEXT NON NULL
       "SELECT value FROM gr_settings WHERE key = ?",
       key
     );
+  }
+
+  async createKeyPair(): Promise<KeyRow> {
+    const key_id = crypto.randomBytes(32).toString("hex");
+    const key_secret = crypto.randomBytes(32).toString("hex");
+    await this.db.run("INSERT INTO gr_keys(key, secret) VALUES(?, ?)", [
+      key_id,
+      key_secret,
+    ]);
+    return { key_id, key_secret };
   }
 
   // 获取 key 对应的密钥

@@ -65,7 +65,23 @@ export function decryptJSON<T>(key: string, data: Buffer): T {
   return JSON.parse(decryptText(key, data));
 }
 
-export function decryptStream(key: string, data: Readable): Readable {
-  // TODO: 流式解密
-  throw new Error("Not implemented");
+// export function decryptStream(key: string, data: Readable): Readable {
+//   // TODO: 流式解密
+//   throw new Error("Not implemented");
+// }
+
+export function decryptRSA<T>(privateKey: string, encryptedData: Buffer): T {
+  const decryptedData = crypto.privateDecrypt(
+    {
+      key: privateKey,
+      // In order to decrypt the data, we need to specify the
+      // same hashing function and padding scheme that we used to
+      // encrypt the data in the previous step
+      padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+      oaepHash: "sha256",
+    },
+    encryptedData
+  );
+  const data = decryptedData.toString("utf-8");
+  return JSON.parse(data);
 }
