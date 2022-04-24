@@ -4,6 +4,7 @@ import { check as checkDiskUsage } from "diskusage";
 import { DriveRow, KeyRow, SettingKey, ShareRow } from "../models/db";
 import * as bcrypt from "bcrypt";
 import * as crypto from "crypto";
+import { randomHex } from "./hash";
 
 class DatabaseManager {
   private db: Database;
@@ -120,6 +121,40 @@ value    TEXT NON NULL
     } else {
       return undefined;
     }
+  }
+
+  // 创建分享
+  async createShare(
+    driveId: number,
+    path: string,
+    strategy: number,
+    files: string[],
+    password?: string
+  ) {
+    // 生成随机 key
+    const key = randomHex(16);
+    await this.db.run(
+      "INSERT INTO gr_share(key, drive_id, path, strategy, files, password) VALUES(?, ?, ?, ?, ?, ?)",
+      [
+        key,
+        driveId,
+        path,
+        strategy,
+        files.length === 0 ? undefined : JSON.stringify(files),
+        password,
+      ]
+    );
+    return key;
+  }
+
+  // 获取分享列表
+  async getShares(): Promise<ShareRow[]> {
+    return await this.db.all("SELECT * FROM gr_share");
+  }
+
+  // 删除分享
+  async deleteShare(key: string): Promise<void> {
+    await this.db.run("DELETE FROM gr_share WHERE key = ?", key);
   }
 
   async getDrives(): Promise<DriveRow[]> {

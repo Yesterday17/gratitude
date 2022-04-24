@@ -11,7 +11,7 @@
 - [ ] WebDAV 透明加密
 - [ ] GET /share
 - [ ] POST /share
-- [ ] DELETE /share/:id
+- [ ] DELETE /share/:key
 
 ### 访客接口
 
