@@ -8,10 +8,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "mdui": "^1.0.2"
+    "mdui": "^1.0.2",
+    "js-crypto-aes": "^1.0.4",
+    "js-md5": "^0.7.3",
+    "@aws-sdk/util-base64-browser": "^3.58.0"
   },
   "devDependencies": {
     "typescript": "^4.5.4",
-    "vite": "^2.9.5"
+    "vite": "^2.9.5",
+    "@types/js-md5": "^0.4.3"
   }
 }
