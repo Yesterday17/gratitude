@@ -193,6 +193,18 @@ CREATE TABLE IF NOT EXISTS gr_settings(
     return { key_id, key_secret };
   }
 
+  // 获取或生成 (key, secret) 供桌面端使用
+  async getOrCreateKeyPair(): Promise<KeyRow> {
+    const { key, secret } = await this.db.get(
+      "SELECT key, secret FROM gr_keys ORDER BY id DESC LIMIT 1"
+    );
+    if (key && secret) {
+      return { key_id: key, key_secret: secret };
+    } else {
+      return this.createKeyPair();
+    }
+  }
+
   // 获取 key 对应的密钥
   async getKeySecret(key: string): Promise<string | undefined> {
     if (!!key) {

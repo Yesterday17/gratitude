@@ -1,7 +1,8 @@
-import { app, BrowserWindow, shell } from "electron";
+import { app, BrowserWindow, shell, ipcMain } from "electron";
 import { release } from "os";
 import { join } from "path";
 import { main as startServer } from "@gratitude/server";
+import { db as database } from "@gratitude/server/dist/services/db";
 import "./samples/electron-store";
 import "./samples/npm-esm-packages";
 
@@ -20,6 +21,7 @@ let win: BrowserWindow | null = null;
 
 async function createWindow() {
   await startServer();
+  const db = await database;
 
   win = new BrowserWindow({
     title: "Main window",
@@ -38,7 +40,7 @@ async function createWindow() {
     const url = `http://${process.env["VITE_DEV_SERVER_HOST"]}:${process.env["VITE_DEV_SERVER_PORT"]}`;
 
     win.loadURL(url);
-    // win.webContents.openDevTools()
+    win.webContents.openDevTools();
   }
 
   // Test active push message to Renderer-process
@@ -50,6 +52,13 @@ async function createWindow() {
   win.webContents.setWindowOpenHandler(({ url }) => {
     if (url.startsWith("https:")) shell.openExternal(url);
     return { action: "deny" };
+  });
+
+  // IPC 事件，加在这里
+  ipcMain.on("api-request/drives", (event) => {
+    db.getDrives().then((drives) => {
+      event.reply("api-response/drives", drives);
+    });
   });
 }
 
