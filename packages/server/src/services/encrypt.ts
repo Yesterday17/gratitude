@@ -85,3 +85,22 @@ export function decryptRSA<T>(privateKey: string, encryptedData: Buffer): T {
   const data = decryptedData.toString("utf-8");
   return JSON.parse(data);
 }
+
+// https://www.sohamkamani.com/nodejs/rsa-encryption/
+export function generateKeyPair() {
+  // The `generateKeyPairSync` method accepts two arguments:
+  // 1. The type ok keys we want, which in this case is "rsa"
+  // 2. An object with the properties of the key
+  return crypto.generateKeyPairSync("rsa", {
+    // The standard secure default length for RSA keys is 2048 bits
+    modulusLength: 2048,
+    publicKeyEncoding: {
+      type: "pkcs1",
+      format: "pem",
+    },
+    privateKeyEncoding: {
+      type: "pkcs1",
+      format: "pem",
+    },
+  });
+}

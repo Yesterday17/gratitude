@@ -7,7 +7,7 @@
   ],
   "scripts": {
     "dev:web": "lerna run dev --stream",
-    "dev:server": "lerna run start --stream",
+    "dev:server": "lerna run start --stream --scope @gratitude/server",
     "cloc": "cloc --exclude-dir=node_modules,dist ."
   },
   "devDependencies": {

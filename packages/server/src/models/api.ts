@@ -21,14 +21,14 @@ export interface SiteDetailResponse {
   // 已经登录
   is_login: true;
   // 可用的网盘信息
-  drives: DriveInfo[];
+  drives: DriveInfoResponse[];
   // 分区
-  partitions: PartitionInfo[];
+  partitions: PartitionInfoResponse[];
   // 磁盘信息
-  disks: DiskInfo[];
+  disks: DiskInfoResponse[];
 }
 
-export interface DriveInfo {
+export interface DriveInfoResponse {
   // 网盘目录的 ID
   id: string;
   // 网盘目录的名称
@@ -39,7 +39,7 @@ export interface DriveInfo {
   partition: number;
 }
 
-export interface PartitionInfo {
+export interface PartitionInfoResponse {
   // 分区 ID
   id: string;
   // 分区名
@@ -50,7 +50,7 @@ export interface PartitionInfo {
   totalBytes: number;
 }
 
-export interface DiskInfo {
+export interface DiskInfoResponse {
   // 磁盘 ID
   id: string;
   // 磁盘类型
