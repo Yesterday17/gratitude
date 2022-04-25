@@ -22,6 +22,7 @@
 
 - [x] POST /drive
 - [x] DELETE /drive
+- [x] POST /reset_password
 
 ### 功能
 

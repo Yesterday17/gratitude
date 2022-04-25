@@ -1,6 +1,7 @@
 import * as crypto from "crypto";
 import { md5 } from "./hash";
 import { Readable } from "stream";
+import * as bcrypt from "bcrypt";
 
 export function encrypt(key: string, data: Record<string, any>) {
   const iv = crypto.randomBytes(12);
@@ -103,4 +104,8 @@ export function generateKeyPair() {
       format: "pem",
     },
   });
+}
+
+export async function encryptPassword(password: string) {
+  return await bcrypt.hash(password, 10);
 }

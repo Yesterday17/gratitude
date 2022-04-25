@@ -14,7 +14,7 @@ import * as crypto from "crypto";
 import { randomHex } from "./hash";
 import * as fs from "fs/promises";
 import { getDiskInfo } from "./disk";
-import { generateKeyPair } from "./encrypt";
+import { encryptPassword, generateKeyPair } from "./encrypt";
 import * as path from "path";
 
 class DatabaseManager {
@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS gr_settings(
       manager.addSetting("info_pri_key", key.privateKey);
       manager.addSetting("user_prefix", randomHex(16));
       manager.addSetting("default_share_key", randomHex(16));
-      manager.addSetting("password", await bcrypt.hash(password, 10));
+      manager.addSetting("password", await encryptPassword(password));
       manager.addSetting("listen", "3010");
 
       // 初始化分区
@@ -166,6 +166,13 @@ CREATE TABLE IF NOT EXISTS gr_settings(
     await this.db.run("INSERT INTO gr_settings(key, value) VALUES(?, ?)", [
       key,
       value,
+    ]);
+  }
+
+  async updateSetting(key: SettingKey, value: string) {
+    await this.db.run("UPDATE gr_settings SET value = ? WHERE key = ?", [
+      value,
+      key,
     ]);
   }
 
