@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Row, Col, Menu, MenuProps } from "antd";
 import "antd/dist/antd.css";
 
+import { DrivesPage } from "./pages/DrivesPage";
 import { SharePage } from "./pages/SharePage";
 import { SettingsPage } from "./pages/SettingsPage";
 
@@ -25,7 +26,7 @@ function getItem(
 }
 
 const App = () => {
-  const [isSharePage, setIsSharePage] = useState(true);
+  const [route, setRoute] = useState("drives");
 
   return (
     <>
@@ -33,12 +34,21 @@ const App = () => {
         <Col span={6}>
           <Menu
             items={[
-              getItem("分享管理", "share", () => setIsSharePage(true)),
-              getItem("设置", "settings", () => setIsSharePage(false)),
+              getItem("网盘管理", "drives", () => setRoute("drives")),
+              getItem("分享管理", "share", () => setRoute("share")),
+              getItem("设置", "settings", () => setRoute("settings")),
             ]}
           />
         </Col>
-        <Col span={18}>{isSharePage ? <SharePage /> : <SettingsPage />}</Col>
+        <Col span={18}>
+          {route === "drives" ? (
+            <DrivesPage />
+          ) : route === "share" ? (
+            <SharePage />
+          ) : (
+            <SettingsPage />
+          )}
+        </Col>
       </Row>
     </>
   );
