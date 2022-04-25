@@ -5,7 +5,7 @@ import { router as adminRouter } from "./api/admin";
 import { db } from "./services/db";
 import { needLocal } from "./api/auth";
 
-async function main() {
+export async function main() {
   const app = express();
   app.use(express.raw());
   app.use(express.json());
@@ -20,5 +20,3 @@ async function main() {
 
   app.listen(await database.getSetting("listen"));
 }
-
-main();

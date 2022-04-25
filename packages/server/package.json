@@ -6,6 +6,8 @@
   "homepage": "https://github.com/Yesterday17/gratitude#readme",
   "license": "ISC",
   "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "bin": "dist/bin.js",
   "directories": {
     "dist": "dist"
   },
@@ -20,7 +22,7 @@
     "url": "git+https://github.com/Yesterday17/gratitude.git"
   },
   "scripts": {
-    "start": "tsc && node ./dist/main.js"
+    "start": "tsc && node ./dist/bin.js"
   },
   "dependencies": {
     "express": "^4.17.3",

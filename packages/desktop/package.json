@@ -6,6 +6,7 @@
   "main": "dist/index.js",
   "private": true,
   "scripts": {
+    "postinstall": "electron-rebuild",
     "start": "tsc && electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
@@ -50,7 +51,8 @@
     "eslint": "^8.0.1",
     "eslint-plugin-import": "^2.25.0",
     "typescript": "~4.5.4",
-    "electron": "^18.1.0"
+    "electron": "^18.1.0",
+    "electron-rebuild": "^3.2.7"
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
