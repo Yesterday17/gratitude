@@ -13,7 +13,7 @@ import { listFolder } from "./api/list";
 
 function init() {
   const hash = window.location.hash;
-  const hashMatch = hash.match(/^#sid=(.+?)(?:&pwd=(.+?))$/);
+  const hashMatch = hash.match(/^#sid=(.+?)(?:&pwd=(.+?))?$/);
   if (hashMatch) {
     const sid = hashMatch[1];
     const password = hashMatch[2];

@@ -43,7 +43,7 @@ router.post("/list", async (req, res) => {
   try {
     const { relativePath, share, password } = await decryptRequest(req.body);
     const p = path.join(
-      (await database.getDriveById(share.drive_id)).root,
+      await database.getDrivePathById(share.drive_id),
       share.path,
       relativePath
     );
@@ -89,7 +89,7 @@ router.get("/file", async (req, res) => {
       req.params as VisitorFileListRequest
     );
     const p = path.join(
-      (await database.getDriveById(share.drive_id)).root,
+      await database.getDrivePathById(share.drive_id),
       share.path,
       relativePath
     );

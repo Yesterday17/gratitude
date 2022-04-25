@@ -279,8 +279,12 @@ CREATE TABLE IF NOT EXISTS gr_settings(
     return rows.map((row) => row.prefix);
   }
 
-  async getDriveById(id: number): Promise<DriveRow> {
-    return await this.db.get("SELECT * FROM gr_drives WHERE id = ?", id);
+  async getDrivePathById(id: number): Promise<string> {
+    const { partitionPath, root } = await this.db.get(
+      "SELECT path partitionPath, root FROM gr_drives LEFT JOIN gr_partitions ON gr_drives.partition = gr_partitions.id WHERE gr_drives.id = ?",
+      id
+    );
+    return path.join(partitionPath, root);
   }
 
   async getDrives(): Promise<DriveRow[]> {
