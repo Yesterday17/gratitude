@@ -65,6 +65,28 @@ async function createWindow() {
       event.reply("api-response/shares", shares);
     });
   });
+
+  ipcMain.on(
+    "api-request/add-share",
+    (
+      event,
+      driveId: number,
+      path: string,
+      strategy: number,
+      files: string[],
+      password?: string
+    ) => {
+      db.createShare(driveId, path, strategy, files, password).then(() => {
+        event.reply("api-response/add-share");
+      });
+    }
+  );
+
+  ipcMain.on("api-request/delete-share", (event, key: string) => {
+    db.deleteShare(key).then(() => {
+      event.reply("api-response/delete-share");
+    });
+  });
 }
 
 app.whenReady().then(createWindow);

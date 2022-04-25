@@ -20,10 +20,21 @@ export const ApiClient = {
   },
 
   async createShare() {
-    //
+    /** TODO:
+      driveId: number,
+      path: string,
+      strategy: number,
+      files: string[],
+      password?: string
+     */
   },
 
   async deleteShare(key: string) {
-    //
+    return new Promise((resolve) => {
+      ipcRenderer.send("api-request/delete-share", key);
+      ipcRenderer.once("api-response/delete-share", () => {
+        resolve(void 0);
+      });
+    });
   },
 };

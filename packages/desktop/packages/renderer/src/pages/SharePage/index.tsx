@@ -36,7 +36,7 @@ const columns: TableColumnType<ShareEntry>[] = [
       <Space size="middle">
         <a
           onClick={() => {
-            // clipboard.writeText(record.url);
+            //TODO: clipboard.writeText(record.url);
           }}
         >
           复制链接
@@ -44,12 +44,20 @@ const columns: TableColumnType<ShareEntry>[] = [
         {!!record.password && (
           <a
             onClick={() => {
-              // clipboard.writeText(record.password!);
+              //TODO: clipboard.writeText(record.password!);
             }}
           >
             复制密码
           </a>
         )}
+        <a
+          onClick={async () => {
+            await window.gratitudeApi.deleteShare(record.key);
+            // TODO: refresh list
+          }}
+        >
+          删除
+        </a>
       </Space>
     ),
   },
@@ -70,7 +78,12 @@ const data: ShareEntry[] = [
 export const SharePage = () => {
   return (
     <>
-      <Button type="primary">Primary Button</Button>
+      <div style={{ direction: "rtl", padding: "1em", paddingBottom: 0 }}>
+        <Button type="primary">创建分享</Button>
+        <Button type="primary" style={{ marginRight: "1em" }}>
+          刷新
+        </Button>
+      </div>
       <br />
       <Table
         columns={columns}
