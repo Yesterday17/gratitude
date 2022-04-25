@@ -5,6 +5,7 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>分享文件</title>
+    <script type="module" src="/src/mdui.ts"></script>
   </head>
   <body
     class="mdui-theme-primary-teal mdui-theme-accent-pink mdui-theme-layout-auto"
@@ -48,6 +49,20 @@
           </button>
         </div>
       </div>
+    </div>
+    <div class="mdui-container hide" id="filelist-box">
+      <ul class="mdui-list" id="file-list">
+        <li class="mdui-list-item mdui-ripple">
+          <i class="mdui-list-item-icon mdui-icon material-icons">folder</i>
+          <div class="mdui-list-item-content">目录A</div>
+        </li>
+        <li class="mdui-list-item mdui-ripple">
+          <i class="mdui-list-item-icon mdui-icon material-icons"
+            >insert_drive_file</i
+          >
+          <div class="mdui-list-item-content">文件A</div>
+        </li>
+      </ul>
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>

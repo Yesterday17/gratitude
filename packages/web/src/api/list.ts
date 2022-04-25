@@ -2,10 +2,10 @@ import { Global } from "../global";
 import { encryptPath } from "../utils/encrypt";
 import { handleResponse } from "./common";
 
-interface ListFolderResponse {
+export interface ListFolderResponse {
   name: string;
   isFile: boolean;
-  children: VisitorFolderChild[];
+  files: VisitorFolderChild[];
 }
 
 interface VisitorFolderChild {
