@@ -22,7 +22,9 @@ router.post("/share", needLogin, async (req, res) => {
     password
   );
 
-  const passwordAppendix = password ? `&pwd=${password}` : "";
+  const passwordAppendix = password
+    ? "" // 存在密码时默认不带密码
+    : `&pwd=${await database.getSetting("default_share_key")}`; // 不存在密码时带默认密码
   const response: ShareEntry = {
     driveId: data.driveId,
     files: data.files,
