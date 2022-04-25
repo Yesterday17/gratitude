@@ -1,4 +1,3 @@
-import * as express from "express";
 import { ShareCreateRequest, ShareEntry } from "../models/api";
 import { db } from "../services/db";
 import { randomHex } from "../services/hash";

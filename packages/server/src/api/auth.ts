@@ -47,3 +47,16 @@ export function decodeBodyJson<T>(body: Buffer): T {
   const decoder = new TextDecoder();
   return JSON.parse(decoder.decode(body));
 }
+
+export async function needLocal(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const ip = req.socket.remoteAddress;
+  if (ip === "127.0.0.1" || ip === "::1") {
+    next();
+  } else {
+    res.end();
+  }
+}

@@ -202,9 +202,17 @@ value    TEXT NON NULL
     return await this.db.all("SELECT * FROM gr_disks");
   }
 
-  async addFolder(path: string) {
+  async createDrive(name: string, path: string) {
     const usage = await checkDiskUsage(path);
+    // TODO
     console.group(usage);
+  }
+
+  async removeDrive(id: number) {
+    // 删除网盘目录
+    await this.db.run("DELETE FROM gr_drives WHERE id = ?", id);
+    // 删除分享
+    await this.db.run("DELETE FROM gr_share WHERE drive_id = ?", id);
   }
 }
 

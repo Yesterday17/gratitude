@@ -33,10 +33,10 @@ export interface DriveInfo {
   id: string;
   // 网盘目录的名称
   name: string;
-  // 网盘目录所在的分区
-  partition: string;
   // 网盘目录所在的目录
   folder: string;
+  // 网盘目录所在的分区 ID
+  partition: number;
 }
 
 export interface PartitionInfo {
@@ -46,6 +46,8 @@ export interface PartitionInfo {
   name: string;
   // 分区剩余空间
   freeBytes: number;
+  // 分区大小
+  totalBytes: number;
 }
 
 export interface DiskInfo {
@@ -87,5 +89,10 @@ export interface ShareCreateRequest {
 
 export interface VisitorFileListRequest {
   key: string;
+  path: string;
+}
+
+export interface DriveCreateRequest {
+  name: string;
   path: string;
 }

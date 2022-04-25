@@ -18,10 +18,14 @@
 - [x] POST /list
 - [x] GET /file
 
+### 管理接口
+
+- [ ] POST /drive
+- [x] DELETE /drive
+
 ### 功能
 
 - [x] 通用鉴权
-- [ ] 添加网盘目录
 - [ ] 修改设置
 
 ## 桌面端
