@@ -1,45 +1,51 @@
 import styles from "@/styles/app.module.scss";
 import { useState } from "react";
+import { Row, Col, Menu, MenuProps } from "antd";
+import "antd/dist/antd.css";
+
+type MenuItem = Required<MenuProps>["items"][number];
+
+function getItem(
+  label: React.ReactNode,
+  key: React.Key,
+  onClick: () => void,
+  icon?: React.ReactNode,
+  type?: "group"
+): MenuItem {
+  return {
+    key,
+    label,
+    onClick,
+    icon,
+    type,
+  } as MenuItem;
+}
+
+const SharePage = () => {
+  return <div>share</div>;
+};
+
+const SettingsPage = () => {
+  return <div>settings</div>;
+};
 
 const App = () => {
-  const [count, setCount] = useState(0);
+  const [isSharePage, setIsSharePage] = useState(false);
 
   return (
-    <div className={styles.app}>
-      <header className={styles.appHeader}>
-        <p>Hello Electron + Vite + React!</p>
-        <p>
-          <button onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.tsx</code> and save to test HMR updates.
-        </p>
-        <div>
-          <a
-            className={styles.appLink}
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {" | "}
-          <a
-            className={styles.appLink}
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-          <div className={styles.staticPublic}>
-            Place static files into the <code>src/renderer/public</code> folder
-          </div>
-        </div>
-      </header>
-    </div>
+    <>
+      <Row>
+        <Col span={6}>
+          <Menu
+            items={[
+              getItem("分享管理", "share", () => setIsSharePage(true)),
+              getItem("设置", "settings", () => setIsSharePage(false)),
+            ]}
+          />
+        </Col>
+        <Col span={18}>{isSharePage ? <SharePage /> : <SettingsPage />}</Col>
+      </Row>
+    </>
   );
 };
 
