@@ -15,7 +15,7 @@ router.get("/info", async (req, res) => {
       code: 0,
       data: {
         isLogin: false,
-        pubKey: database.getSetting("info_pub_key"),
+        pubKey: await database.getSetting("info_pub_key"),
       },
     });
   } else {
