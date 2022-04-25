@@ -141,6 +141,7 @@ value    TEXT NON NULL
   ) {
     // 生成随机 key
     const key = randomHex(16);
+    // 创建分享
     await this.db.run(
       "INSERT INTO gr_share(key, drive_id, path, strategy, files, password) VALUES(?, ?, ?, ?, ?, ?)",
       [
@@ -152,7 +153,15 @@ value    TEXT NON NULL
         password,
       ]
     );
-    return key;
+    // 生成前缀
+    const prefix = randomHex(16);
+    // 创建前缀
+    await this.db.run("INSERT INTO gr_share_prefix(key, prefix) VALUES(?, ?)", [
+      key,
+      prefix,
+    ]);
+
+    return { key, prefix };
   }
 
   // 获取分享列表

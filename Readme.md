@@ -9,9 +9,9 @@
 - [x] GET /info
 - [x] POST /login
 - [ ] WebDAV 透明加密
-- [ ] GET /share
-- [ ] POST /share
-- [ ] DELETE /share/:key
+- [x] GET /share
+- [x] POST /share
+- [x] DELETE /share/:key
 
 ### 访客接口
 

@@ -34,10 +34,16 @@ export async function needLogin(
     res.locals.keySecret = keySecret;
     wrapResponseJson(res);
     try {
-      req.body = decrypt(keySecret, req.body);
+      const body = decrypt(keySecret, req.body);
+      req.body = body;
       next();
     } catch (e) {
       res.json(e);
     }
   }
+}
+
+export function decodeBodyJson<T>(body: Buffer): T {
+  const decoder = new TextDecoder();
+  return JSON.parse(decoder.decode(body));
 }

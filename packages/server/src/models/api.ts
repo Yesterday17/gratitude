@@ -68,7 +68,6 @@ export interface LoginResponse {
 export type ShareListResponse = ShareEntry[];
 
 export interface ShareEntry {
-  id: number;
   key: string;
   url: string;
   password?: string;
