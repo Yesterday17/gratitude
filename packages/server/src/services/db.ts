@@ -279,6 +279,10 @@ CREATE TABLE IF NOT EXISTS gr_settings(
     return rows.map((row) => row.prefix);
   }
 
+  async getDriveById(id: number): Promise<DriveRow> {
+    return await this.db.get("SELECT * FROM gr_drives WHERE id = ?", id);
+  }
+
   async getDrives(): Promise<DriveRow[]> {
     return await this.db.all("SELECT * FROM gr_drives");
   }

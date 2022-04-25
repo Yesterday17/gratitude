@@ -7,8 +7,6 @@ import { decryptText, encrypt, encryptStream } from "../services/encrypt";
 
 export const router = express.Router();
 
-// FIXME: share.path 不是绝对路径，需要转换
-
 /**
  * 解密文件分享请求中的路径
  *
@@ -40,9 +38,15 @@ async function decryptRequest({ key, path }: VisitorFileListRequest) {
 
 // 访客目录结构展示接口
 router.post("/list", async (req, res) => {
+  const database = await db;
+
   try {
     const { relativePath, share, password } = await decryptRequest(req.body);
-    const p = path.join(share.path, relativePath);
+    const p = path.join(
+      (await database.getDriveById(share.drive_id)).root,
+      share.path,
+      relativePath
+    );
     const stat = await fs.stat(p);
     if (!stat.isDirectory()) {
       throw {
@@ -78,11 +82,17 @@ router.post("/list", async (req, res) => {
 
 // 访客文件获取接口
 router.get("/file", async (req, res) => {
+  const database = await db;
+
   try {
     const { relativePath, share, password } = await decryptRequest(
       req.params as VisitorFileListRequest
     );
-    const p = path.join(share.path, relativePath);
+    const p = path.join(
+      (await database.getDriveById(share.drive_id)).root,
+      share.path,
+      relativePath
+    );
     const stat = await fs.stat(p);
     if (!stat.isFile()) {
       throw {
