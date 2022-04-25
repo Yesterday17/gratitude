@@ -1,8 +1,7 @@
 import { app, BrowserWindow, shell, ipcMain } from "electron";
 import { release } from "os";
 import { join } from "path";
-import { main as startServer } from "@gratitude/server";
-import { db as database } from "@gratitude/server/dist/services/db";
+import { main as startServer, db as database } from "@gratitude/server";
 import "./samples/electron-store";
 import "./samples/npm-esm-packages";
 
@@ -58,6 +57,12 @@ async function createWindow() {
   ipcMain.on("api-request/drives", (event) => {
     db.getDrives().then((drives) => {
       event.reply("api-response/drives", drives);
+    });
+  });
+
+  ipcMain.on("api-request/shares", (event) => {
+    db.getShares().then((shares) => {
+      event.reply("api-response/shares", shares);
     });
   });
 }

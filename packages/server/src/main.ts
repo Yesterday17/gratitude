@@ -20,3 +20,5 @@ export async function main() {
 
   app.listen(await database.getSetting("listen"));
 }
+
+export { db };
