@@ -1,10 +1,21 @@
 import { Database as DatabaseDriver } from "sqlite3";
 import { open, Database } from "sqlite";
 import { check as checkDiskUsage } from "diskusage";
-import { DriveRow, KeyRow, SettingKey, ShareRow } from "../models/db";
+import {
+  DiskRow,
+  DriveRow,
+  KeyRow,
+  PartitionRow,
+  SettingKey,
+  ShareRow,
+} from "../models/db";
 import * as bcrypt from "bcrypt";
 import * as crypto from "crypto";
 import { randomHex } from "./hash";
+import * as fs from "fs/promises";
+import { getDiskInfo } from "./disk";
+import { generateKeyPair } from "./encrypt";
+import * as path from "path";
 
 class DatabaseManager {
   private db: Database;
@@ -28,7 +39,7 @@ CREATE TABLE IF NOT EXISTS gr_drives(
 CREATE TABLE IF NOT EXISTS gr_partitions(
 id        INTEGER PRIMARY KEY AUTOINCREMENT,
 name      TEXT NON NULL,
-real_id   TEXT NON NULL,
+path      TEXT NON NULL,
 disk      INTEGER NOT NULL,
 FOREIGN KEY("disk") REFERENCES "gr_disks"("id")
 );`);
@@ -59,32 +70,74 @@ FOREIGN KEY("drive_id") REFERENCES "gr_drives"("id")
 CREATE TABLE IF NOT EXISTS gr_share_prefix(
   id        INTEGER PRIMARY KEY AUTOINCREMENT,
   key       TEXT NON NULL,
-  prefix    TEXT NON NULL
-`);
+  prefix    TEXT NON NULL,
+  FOREIGN KEY("key") REFERENCES "gr_share"("key")
+);`);
 
     // 密钥信息表
     await db.run(`
 CREATE TABLE IF NOT EXISTS gr_keys(
-id       INTEGER PRIMARY KEY AUTOINCREMENT,
-key      TEXT NON NULL,
-secret   TEXT NON NULL
+  id       INTEGER PRIMARY KEY AUTOINCREMENT,
+  key      TEXT NON NULL,
+  secret   TEXT NON NULL
 );`);
 
     // 设置信息表
     await db.run(`
 CREATE TABLE IF NOT EXISTS gr_settings(
-id       INTEGER PRIMARY KEY AUTOINCREMENT,
-key      TEXT NON NULL,
-value    TEXT NON NULL
+  id       INTEGER PRIMARY KEY AUTOINCREMENT,
+  key      TEXT NON NULL,
+  value    TEXT NON NULL
 );`);
 
     /////////////////////////////////////////////////////////////////////
-    // TODO: 检查初始化设置
-    return new DatabaseManager(db);
+    // 检查初始化设置
+    const manager = new DatabaseManager(db);
+    if (await manager.isEmpty()) {
+      // 初始化设置
+      const key = generateKeyPair();
+      manager.addSetting("info_pub_key", key.publicKey);
+      manager.addSetting("info_pri_key", key.privateKey);
+      manager.addSetting("user_prefix", randomHex(16));
+      manager.addSetting("default_share_key", randomHex(16));
+      manager.addSetting("password", randomHex(16));
+      manager.addSetting("listen", "3010");
+
+      // 初始化分区
+      const { disks, partitions } = await getDiskInfo();
+      const diskId: Record<string, number> = {};
+      for (const disk of disks) {
+        await db.run("INSERT INTO gr_disks(type, real_id) VALUES(?, ?)", [
+          disk.type,
+          disk.realId,
+        ]);
+        const { id }: { id: number } = await db.get(
+          "SELECT id FROM gr_disks WHERE real_id = ?",
+          [disk.realId]
+        );
+        diskId[disk.realId] = id;
+      }
+
+      for (const partition of partitions) {
+        await db.run(
+          "INSERT INTO gr_partitions(name, path, disk) VALUES(?, ?, ?)",
+          [partition.name, partition.path, diskId[partition.diskId]]
+        );
+      }
+    }
+
+    return manager;
   }
 
   private constructor(db: Database) {
     this.db = db;
+  }
+
+  async isEmpty(): Promise<boolean> {
+    const { count } = await this.db.get(
+      "SELECT COUNT(*) AS count FROM gr_settings"
+    );
+    return count === 0;
   }
 
   // 获取分享的行
@@ -99,10 +152,18 @@ value    TEXT NON NULL
    * @returns 设置内容
    */
   async getSetting(key: SettingKey): Promise<string> {
-    return await this.db.get(
+    const { value }: { value: string } = await this.db.get(
       "SELECT value FROM gr_settings WHERE key = ?",
       key
     );
+    return value;
+  }
+
+  async addSetting(key: SettingKey, value: string) {
+    await this.db.run("INSERT INTO gr_settings(key, value) VALUES(?, ?)", [
+      key,
+      value,
+    ]);
   }
 
   // 校验密码
@@ -125,7 +186,11 @@ value    TEXT NON NULL
   // 获取 key 对应的密钥
   async getKeySecret(key: string): Promise<string | undefined> {
     if (!!key) {
-      return await this.db.get("SELECT secret FROM gr_keys WHERE key = ?", key);
+      const { secret } = await this.db.get(
+        "SELECT secret FROM gr_keys WHERE key = ?",
+        key
+      );
+      return secret;
     } else {
       return undefined;
     }
@@ -176,10 +241,11 @@ value    TEXT NON NULL
 
   // 获取分享的前缀
   async getSharePrefix(key: string): Promise<string | undefined> {
-    return await this.db.get(
+    const { prefix } = await this.db.get(
       "SELECT prefix FROM gr_share_prefix WHERE key = ?",
       key
     );
+    return prefix;
   }
 
   // 获取所有去重后的已用前缀
@@ -194,18 +260,37 @@ value    TEXT NON NULL
     return await this.db.all("SELECT * FROM gr_drives");
   }
 
-  async getPartitions(): Promise<DriveRow[]> {
+  async getPartitions(): Promise<PartitionRow[]> {
     return await this.db.all("SELECT * FROM gr_partitions");
   }
 
-  async getDisks(): Promise<DriveRow[]> {
+  async getDisks(): Promise<DiskRow[]> {
     return await this.db.all("SELECT * FROM gr_disks");
   }
 
-  async createDrive(name: string, path: string) {
-    const usage = await checkDiskUsage(path);
-    // TODO
-    console.group(usage);
+  async createDrive(name: string, root: string) {
+    if (!(await fs.stat(root)).isDirectory()) {
+      throw {
+        code: -1,
+        message: "非法目录或目录不存在！",
+      };
+    }
+
+    const fullPath = path.resolve(root);
+    let partition: PartitionRow | null = null;
+    const partitions = await this.getPartitions();
+    for (const p of partitions) {
+      if (fullPath.startsWith(p.path)) {
+        if (partition == null || partition.path.length < p.path.length) {
+          partition = p;
+        }
+      }
+    }
+
+    await this.db.run(
+      "INSERT INTO gr_drives(name, root, partition) VALUES(?, ?, ?)",
+      [name, path.relative(partition.path, fullPath), partition!.id]
+    );
   }
 
   async removeDrive(id: number) {

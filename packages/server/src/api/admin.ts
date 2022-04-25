@@ -1,13 +1,12 @@
 import * as express from "express";
 import { DriveCreateRequest } from "../models/api";
 import { db } from "../services/db";
-import { decodeBodyJson } from "./auth";
 
 export const router = express.Router();
 
 router.post("/drive", async (req, res) => {
   const database = await db;
-  const data: DriveCreateRequest = decodeBodyJson(req.body);
+  const data: DriveCreateRequest = req.body;
 
   await database.createDrive(data.name, data.path);
   res.json({ code: 0, data: {} });

@@ -31,7 +31,7 @@ export interface DriveRow {
 export interface PartitionRow {
   id: number;
   name: string;
-  real_id: string;
+  path: string;
   disk: number;
 }
 

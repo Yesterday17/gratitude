@@ -20,7 +20,7 @@
 
 ### 管理接口
 
-- [ ] POST /drive
+- [x] POST /drive
 - [x] DELETE /drive
 
 ### 功能

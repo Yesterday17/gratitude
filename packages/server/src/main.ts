@@ -18,7 +18,7 @@ async function main() {
   // 管理路由
   app.use("/admin", needLocal, adminRouter);
 
-  app.listen(3010);
+  app.listen(await database.getSetting("listen"));
 }
 
 main();
