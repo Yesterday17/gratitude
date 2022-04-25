@@ -3,6 +3,9 @@ import { useState } from "react";
 import { Row, Col, Menu, MenuProps } from "antd";
 import "antd/dist/antd.css";
 
+import { SharePage } from "./pages/SharePage";
+import { SettingsPage } from "./pages/SettingsPage";
+
 type MenuItem = Required<MenuProps>["items"][number];
 
 function getItem(
@@ -21,20 +24,12 @@ function getItem(
   } as MenuItem;
 }
 
-const SharePage = () => {
-  return <div>share</div>;
-};
-
-const SettingsPage = () => {
-  return <div>settings</div>;
-};
-
 const App = () => {
-  const [isSharePage, setIsSharePage] = useState(false);
+  const [isSharePage, setIsSharePage] = useState(true);
 
   return (
     <>
-      <Row>
+      <Row style={{ height: "100%" }}>
         <Col span={6}>
           <Menu
             items={[
