@@ -8,8 +8,7 @@ import "./style.css";
 
 // 导入
 import { Global } from "./global";
-import { encryptPath, decryptResponse } from "./utils/encrypt";
-import { fromBase64 } from "@aws-sdk/util-base64-browser";
+import { decryptResponseString } from "./utils/encrypt";
 import { listFolder } from "./api/list";
 
 function init() {
@@ -34,6 +33,9 @@ function init() {
 
     submitPassword();
   }
+
+  // FIXME: remove this
+  window.dec = decryptResponseString;
 }
 
 init();

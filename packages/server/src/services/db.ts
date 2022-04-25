@@ -95,12 +95,15 @@ CREATE TABLE IF NOT EXISTS gr_settings(
     const manager = new DatabaseManager(db);
     if (await manager.isEmpty()) {
       // 初始化设置
+      const password = randomHex(16);
+      console.log("password = " + password);
+
       const key = generateKeyPair();
       manager.addSetting("info_pub_key", key.publicKey);
       manager.addSetting("info_pri_key", key.privateKey);
       manager.addSetting("user_prefix", randomHex(16));
       manager.addSetting("default_share_key", randomHex(16));
-      manager.addSetting("password", randomHex(16));
+      manager.addSetting("password", await bcrypt.hash(password, 10));
       manager.addSetting("listen", "3010");
 
       // 初始化分区
@@ -186,14 +189,15 @@ CREATE TABLE IF NOT EXISTS gr_settings(
   // 获取 key 对应的密钥
   async getKeySecret(key: string): Promise<string | undefined> {
     if (!!key) {
-      const { secret } = await this.db.get(
+      const data = await this.db.get(
         "SELECT secret FROM gr_keys WHERE key = ?",
         key
       );
-      return secret;
-    } else {
-      return undefined;
+      if (data) {
+        return data.secret;
+      }
     }
+    return undefined;
   }
 
   // 创建分享
