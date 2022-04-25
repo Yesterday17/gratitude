@@ -56,7 +56,7 @@ real_id   TEXT NON NULL
     await db.run(`
 CREATE TABLE IF NOT EXISTS gr_share(
 id        INTEGER PRIMARY KEY AUTOINCREMENT,
-key       TEXT NON NULL,
+key       TEXT NON NULL UNIQUE,
 password  TEXT,
 drive_id  INTEGER NON NULL,
 path      TEXT NON NULL,
@@ -69,9 +69,9 @@ FOREIGN KEY("drive_id") REFERENCES "gr_drives"("id")
     await db.run(`
 CREATE TABLE IF NOT EXISTS gr_share_prefix(
   id        INTEGER PRIMARY KEY AUTOINCREMENT,
-  key       TEXT NON NULL,
+  share_key TEXT NON NULL UNIQUE,
   prefix    TEXT NON NULL,
-  FOREIGN KEY("key") REFERENCES "gr_share"("key")
+  FOREIGN KEY("share_key") REFERENCES "gr_share"("key")
 );`);
 
     // 密钥信息表
@@ -244,10 +244,10 @@ CREATE TABLE IF NOT EXISTS gr_settings(
     // 生成前缀
     const prefix = randomHex(16);
     // 创建前缀
-    await this.db.run("INSERT INTO gr_share_prefix(key, prefix) VALUES(?, ?)", [
-      key,
-      prefix,
-    ]);
+    await this.db.run(
+      "INSERT INTO gr_share_prefix(share_key, prefix) VALUES(?, ?)",
+      [key, prefix]
+    );
 
     return { key, prefix };
   }
@@ -265,7 +265,7 @@ CREATE TABLE IF NOT EXISTS gr_settings(
   // 获取分享的前缀
   async getSharePrefix(key: string): Promise<string | undefined> {
     const { prefix } = await this.db.get(
-      "SELECT prefix FROM gr_share_prefix WHERE key = ?",
+      "SELECT prefix FROM gr_share_prefix WHERE share_key = ?",
       key
     );
     return prefix;

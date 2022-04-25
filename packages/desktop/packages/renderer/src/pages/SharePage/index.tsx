@@ -79,7 +79,15 @@ export const SharePage = () => {
   return (
     <>
       <div style={{ direction: "rtl", padding: "1em", paddingBottom: 0 }}>
-        <Button type="primary">创建分享</Button>
+        <Button
+          type="primary"
+          onClick={() => {
+            // TODO: Model & create
+            window.gratitudeApi.createShare();
+          }}
+        >
+          创建分享
+        </Button>
         <Button type="primary" style={{ marginRight: "1em" }}>
           刷新
         </Button>

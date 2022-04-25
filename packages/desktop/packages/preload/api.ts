@@ -27,6 +27,12 @@ export const ApiClient = {
       files: string[],
       password?: string
      */
+    return new Promise((resolve) => {
+      ipcRenderer.send("api-request/add-share", 1, "下载", 0, [], "");
+      ipcRenderer.once("api-response/add-share", () => {
+        resolve(void 0);
+      });
+    });
   },
 
   async deleteShare(key: string) {
