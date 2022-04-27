@@ -1,6 +1,7 @@
 import * as express from "express";
 import { db } from "../services/db";
 import { decryptRSA, encrypt } from "../services/encrypt";
+import * as webdav from "webdav-server";
 
 export const router = express.Router();
 
@@ -64,4 +65,36 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// TODO: webdav
+const servers: Map<number, webdav.v2.WebDAVServer> = new Map();
+
+router.use("/drive/:id", async (req, res, next) => {
+  const database = await db;
+  const id = parseInt(req.params.id);
+  if (!servers.has(id)) {
+    const drivePath = await database.getDrivePathById(id);
+    if (drivePath) {
+      servers.set(
+        id,
+        new webdav.v2.WebDAVServer({
+          rootFileSystem: new webdav.v2.PhysicalFileSystem(drivePath),
+        })
+      );
+    } else {
+      servers.set(id, undefined);
+    }
+  }
+
+  if (!servers.get(id)) {
+    next();
+    return;
+  }
+
+  req.url = req.url.replace(/^\/drive\/\d+/, "");
+  servers
+    .get(id)
+    .executeRequest(
+      req,
+      res,
+      `/${await database.getSetting("user_prefix")}/drive/${id}`
+    );
+});
