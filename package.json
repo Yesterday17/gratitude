@@ -9,7 +9,7 @@
     "dev:server": "lerna run start --stream --scope @gratitude/server",
     "dev:web": "lerna run dev --stream --scope @gratitude/web",
     "dev:desktop": "lerna run dev --stream --scope @gratitude/desktop",
-    "cloc": "cloc --exclude-dir=node_modules,dist ."
+    "cloc": "cloc --exclude-dir=node_modules,dist,build ."
   },
   "devDependencies": {
     "lerna": "^4.0.0"
