@@ -36,6 +36,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   webdav_client: ^1.1.7
   path: ^1.8.1
+  wechat_assets_picker: ^7.1.2
+  # wechat_camera_picker: ^3.1.0
 
 dev_dependencies:
   flutter_test:
