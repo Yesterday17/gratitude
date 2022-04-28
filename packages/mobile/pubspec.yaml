@@ -37,6 +37,8 @@ dependencies:
   webdav_client: ^1.1.7
   path: ^1.8.1
   wechat_assets_picker: ^7.1.2
+  hawk_fab_menu: ^1.1.2
+  file_picker: ^4.5.1
   # wechat_camera_picker: ^3.1.0
 
 dev_dependencies:

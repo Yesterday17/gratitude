@@ -1,6 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gratitude/pages/folder.dart';
-import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 void main() {
   runApp(const MyApp());
@@ -44,36 +44,37 @@ class _MyHomePageState extends State<MyHomePage> {
     Builder(builder: (context) {
       return const FolderView();
     }),
-    Container(),
     Text("3"),
   ];
 
   void _onItemTapped(int index) {
-    if (index == 1) {
-      AssetPicker.pickAssets(context).then((List<AssetEntity>? result) {
-        print(result);
-      });
-    } else {
-      setState(() {
-        _selectedIndex = index;
-      });
-    }
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Gratitude")),
+      appBar: AppBar(
+        title: const Text("Gratitude"),
+        actions: [
+          IconButton(
+            icon: const Icon(CupertinoIcons.arrow_up_arrow_down),
+            onPressed: () {
+              // AssetPicker.pickAssets(context).then((List<AssetEntity>? result) {
+              //   print(result);
+              // });
+            },
+          ),
+        ],
+      ),
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.cloud_outlined),
             label: '文件',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.photo),
-            label: '照片',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
