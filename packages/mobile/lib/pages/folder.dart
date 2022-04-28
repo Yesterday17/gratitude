@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/global.dart';
+import 'package:gratitude/global.dart';
 import 'package:webdav_client/webdav_client.dart';
 import 'package:path/path.dart' as p;
 

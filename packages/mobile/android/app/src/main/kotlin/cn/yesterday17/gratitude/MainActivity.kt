@@ -1,4 +1,4 @@
-package cn.yesterday17.mobile
+package cn.yesterday17.gratitude
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/pages/folder.dart';
+import 'package:gratitude/pages/folder.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 void main() {

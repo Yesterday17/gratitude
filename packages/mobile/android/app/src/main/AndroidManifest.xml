@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cn.yesterday17.mobile">
+    package="cn.yesterday17.gratitude">
    <application
-        android:label="mobile"
+        android:label="Gratitude"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
