@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gratitude/global.dart';
 import 'package:gratitude/pages/folder.dart';
+import 'package:gratitude/pages/settings.dart';
+import 'package:gratitude/pages/transport.dart';
 
 Future<void> main() async {
   await Global.init();
@@ -46,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Builder(builder: (context) {
       return const FolderView();
     }),
-    Text("3"),
+    const SettingsPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -64,9 +66,9 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             icon: const Icon(CupertinoIcons.arrow_up_arrow_down),
             onPressed: () {
-              // AssetPicker.pickAssets(context).then((List<AssetEntity>? result) {
-              //   print(result);
-              // });
+              // 跳转到传输界面
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const TransportPage()));
             },
           ),
         ],
