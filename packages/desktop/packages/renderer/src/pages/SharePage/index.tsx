@@ -1,4 +1,5 @@
 import { Table, Tag, Space, TableColumnType, Button } from "antd";
+import { useCallback, useEffect, useState } from "react";
 // import { clipboard } from "electron";
 
 export type ShareListResponse = ShareEntry[];
@@ -7,7 +8,7 @@ export interface ShareEntry {
   key: string;
   url: string;
   password?: string;
-  driveId: number;
+  drive: string;
   path: string;
   strategy: number;
   files: string[];
@@ -15,14 +16,14 @@ export interface ShareEntry {
 
 const columns: TableColumnType<ShareEntry>[] = [
   {
-    title: "分享内容",
-    dataIndex: "key",
-    key: "key",
+    title: "网盘",
+    dataIndex: "drive",
+    key: "drive",
   },
   {
-    title: "所处网盘",
-    dataIndex: "driveId",
-    key: "driveId",
+    title: "分享 ID",
+    dataIndex: "key",
+    key: "key",
   },
   {
     title: "分享路径",
@@ -63,19 +64,26 @@ const columns: TableColumnType<ShareEntry>[] = [
   },
 ];
 
-const data: ShareEntry[] = [
-  {
-    key: "1",
-    driveId: 1,
-    url: "https://www.google.com",
-    files: ["123"],
-    path: "/",
-    strategy: 0,
-    // password: "123",
-  },
-];
-
 export const SharePage = () => {
+  // getShares
+  const [shareEntry, setShareEntry] = useState<ShareEntry[]>([]);
+  const [refreshCount, setRefreshCount] = useState(0);
+
+  useEffect(() => {
+    Promise.all([
+      window.gratitudeApi.getDrives(),
+      window.gratitudeApi.getShares(),
+    ]).then(([drives, res]) => {
+      console.log(drives);
+      res.forEach((r: any) => {
+        const drive = drives.find((drive: any) => drive.id === r.drive_id)!;
+        r.drive = drive.name;
+        r.path = "/" + drive.root + "/" + r.path;
+      });
+      setShareEntry(res);
+    });
+  }, [refreshCount]);
+
   return (
     <>
       <div style={{ direction: "rtl", padding: "1em", paddingBottom: 0 }}>
@@ -88,14 +96,20 @@ export const SharePage = () => {
         >
           创建分享
         </Button>
-        <Button type="primary" style={{ marginRight: "1em" }}>
+        <Button
+          type="primary"
+          style={{ marginRight: "1em" }}
+          onClick={() => {
+            setRefreshCount((r) => r + 1);
+          }}
+        >
           刷新
         </Button>
       </div>
       <br />
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={shareEntry}
         expandable={{
           expandedRowRender: (record) => (
             <div>
