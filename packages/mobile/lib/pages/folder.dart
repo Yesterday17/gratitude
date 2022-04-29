@@ -29,16 +29,23 @@ class _FolderViewState extends State<FolderView> {
 
   void readDir() async {
     try {
+      setState(() {
+        loading = true;
+      });
       final List<File> files = await Global.client.readDir(path);
       files.removeWhere((element) =>
           !showHiddenFiles ? element.name!.startsWith(".") : false);
       if (path != "/") {
         files.insert(0, File(name: "..", isDir: true));
       }
+      content.replaceRange(0, content.length, files);
       setState(() {
-        content.replaceRange(0, content.length, files);
+        loading = false;
       });
     } catch (e) {
+      setState(() {
+        loading = false;
+      });
       if (kDebugMode) {
         print(e);
       }
@@ -47,66 +54,69 @@ class _FolderViewState extends State<FolderView> {
 
   @override
   Widget build(BuildContext context) {
-    return HawkFabMenu(
-      icon: AnimatedIcons.add_event,
-      items: [
-        HawkFabMenuItem(
-          label: '上传图片',
-          icon: const Icon(Icons.image),
-          ontap: () async {
-            try {
-              final result = await AssetPicker.pickAssets(context);
-              // 1. TODO: 上传
-              print(result);
-              // 2. 跳转到传输界面
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const TransportPage()));
-            } catch (e) {
-              // 忽略错误
-            }
-          },
-        ),
-        HawkFabMenuItem(
-          label: '上传文件',
-          icon: const Icon(Icons.upload),
-          ontap: () async {
-            try {
-              FilePickerResult? result = await FilePicker.platform.pickFiles();
-              if (result != null) {
-                // 1. TODO: 上传
-                print(result.files.single.path);
-                // 2. 跳转到传输界面
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const TransportPage()));
-              } else {
-                // 用户取消了选择
-              }
-            } catch (e) {
-              // 忽略错误
-            }
-          },
-        ),
-      ],
-      body: ListView.builder(
-        itemBuilder: (context, index) {
-          final item = content[index];
-          return ListTile(
-            leading: item.isDir ?? false
-                ? const Icon(Icons.folder)
-                : const Icon(Icons.insert_drive_file),
-            title: Text(item.name!),
-            onTap: () {
-              if (item.isDir!) {
-                path = p.normalize(p.join(path, item.name!));
-                readDir();
-              } else {
-                // TODO: open file
-              }
-            },
+    return loading
+        ? const Center(child: CircularProgressIndicator())
+        : HawkFabMenu(
+            icon: AnimatedIcons.add_event,
+            items: [
+              HawkFabMenuItem(
+                label: '上传图片',
+                icon: const Icon(Icons.image),
+                ontap: () async {
+                  try {
+                    final result = await AssetPicker.pickAssets(context);
+                    // 1. TODO: 上传
+                    print(result);
+                    // 2. 跳转到传输界面
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const TransportPage()));
+                  } catch (e) {
+                    // 忽略错误
+                  }
+                },
+              ),
+              HawkFabMenuItem(
+                label: '上传文件',
+                icon: const Icon(Icons.upload),
+                ontap: () async {
+                  try {
+                    FilePickerResult? result =
+                        await FilePicker.platform.pickFiles();
+                    if (result != null) {
+                      // 1. TODO: 上传
+                      print(result.files.single.path);
+                      // 2. 跳转到传输界面
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const TransportPage()));
+                    } else {
+                      // 用户取消了选择
+                    }
+                  } catch (e) {
+                    // 忽略错误
+                  }
+                },
+              ),
+            ],
+            body: ListView.builder(
+              itemBuilder: (context, index) {
+                final item = content[index];
+                return ListTile(
+                  leading: item.isDir ?? false
+                      ? const Icon(Icons.folder)
+                      : const Icon(Icons.insert_drive_file),
+                  title: Text(item.name!),
+                  onTap: () {
+                    if (item.isDir!) {
+                      path = p.normalize(p.join(path, item.name!));
+                      readDir();
+                    } else {
+                      // TODO: open file
+                    }
+                  },
+                );
+              },
+              itemCount: content.length,
+            ),
           );
-        },
-        itemCount: content.length,
-      ),
-    );
   }
 }
