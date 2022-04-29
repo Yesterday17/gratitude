@@ -26,6 +26,10 @@ class Global {
     }
   }
 
+  static bool isLogin() {
+    return false;
+  }
+
   static Future<void> logout() async {
     await preferences.remove("server");
     await preferences.remove("authKey");

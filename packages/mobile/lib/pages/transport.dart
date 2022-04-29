@@ -10,6 +10,9 @@ class TransportPage extends StatefulWidget {
 class _TransportPageState extends State<TransportPage> {
   @override
   Widget build(BuildContext context) {
-    return const Text("transport");
+    return Scaffold(
+      appBar: AppBar(title: const Text("文件传输")),
+      // body: ,
+    );
   }
 }

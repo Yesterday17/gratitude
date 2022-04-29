@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gratitude/app.dart';
 import 'package:gratitude/global.dart';
+import 'package:gratitude/pages/login.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(),
+      home: Global.isLogin() ? const MyHomePage() : const LoginPage(),
     );
   }
 }
