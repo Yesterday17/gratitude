@@ -25,4 +25,10 @@ class Global {
       client = newClient("$server/drive/$driveId");
     }
   }
+
+  static Future<void> logout() async {
+    await preferences.remove("server");
+    await preferences.remove("authKey");
+    await preferences.remove("authSecret");
+  }
 }
