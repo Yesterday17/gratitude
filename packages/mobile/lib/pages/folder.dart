@@ -112,16 +112,18 @@ class _FolderViewState extends State<FolderView> {
                       path = p.normalize(p.join(path, item.name!));
                       readDir();
                     } else {
-                      final filePath = p.normalize(p.join(path, item.name!));
+                      final remoteFilePath =
+                          p.normalize(p.join(path, item.name!));
+                      final localFilePath = p.join(
+                        (await getExternalStorageDirectory())!.path,
+                        item.name!,
+                      );
                       final transfer =
-                          TransferItem.download(item.name!, filePath);
+                          TransferItem.download(item.name!, localFilePath);
                       Global.transferNotifier.add(transfer);
                       await Global.client.read2File(
-                        filePath,
-                        p.join(
-                          (await getExternalStorageDirectory())!.path,
-                          item.name!,
-                        ),
+                        remoteFilePath,
+                        localFilePath,
                         onProgress: (count, total) {
                           transfer.updateProgress(count * 100 ~/ total);
                         },
