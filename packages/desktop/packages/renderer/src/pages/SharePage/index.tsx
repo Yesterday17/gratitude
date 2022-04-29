@@ -1,5 +1,5 @@
-import { Table, Tag, Space, TableColumnType, Button } from "antd";
-import { useCallback, useEffect, useState } from "react";
+import { Table, PageHeader, Space, TableColumnType, Button } from "antd";
+import { useEffect, useState } from "react";
 // import { clipboard } from "electron";
 
 export type ShareListResponse = ShareEntry[];
@@ -88,28 +88,31 @@ export const SharePage = () => {
   }, [refreshCount]);
 
   return (
-    <>
-      <div style={{ direction: "rtl", padding: "1em", paddingBottom: 0 }}>
+    <PageHeader
+      className="site-page-header"
+      title="分享管理"
+      subTitle="修改网盘系统对外的分享列表"
+      extra={[
         <Button
+          key="1"
+          onClick={() => {
+            setRefreshCount((r) => r + 1);
+          }}
+        >
+          刷新
+        </Button>,
+        <Button
+          key="2"
           type="primary"
           onClick={() => {
             // TODO: Model & create
             window.gratitudeApi.createShare();
           }}
         >
-          创建分享
-        </Button>
-        <Button
-          type="primary"
-          style={{ marginRight: "1em" }}
-          onClick={() => {
-            setRefreshCount((r) => r + 1);
-          }}
-        >
-          刷新
-        </Button>
-      </div>
-      <br />
+          分享
+        </Button>,
+      ]}
+    >
       <Table
         columns={columns}
         dataSource={shareEntry}
@@ -140,6 +143,6 @@ export const SharePage = () => {
           rowExpandable: () => true,
         }}
       />
-    </>
+    </PageHeader>
   );
 };
