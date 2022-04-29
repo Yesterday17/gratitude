@@ -10,6 +10,15 @@ export const ApiClient = {
     });
   },
 
+  async getDrivePathById(id: number) {
+    return new Promise((resolve) => {
+      ipcRenderer.send("api-request/drivePath", id);
+      ipcRenderer.once("api-response/drivePath", (event, path) => {
+        resolve(path);
+      });
+    });
+  },
+
   async getShares() {
     return new Promise((resolve) => {
       ipcRenderer.send("api-request/shares");

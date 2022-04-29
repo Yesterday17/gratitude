@@ -73,13 +73,16 @@ export const SharePage = () => {
     Promise.all([
       window.gratitudeApi.getDrives(),
       window.gratitudeApi.getShares(),
-    ]).then(([drives, res]) => {
+    ]).then(async ([drives, res]) => {
       console.log(drives);
-      res.forEach((r: any) => {
+      for (const r of res) {
         const drive = drives.find((drive: any) => drive.id === r.drive_id)!;
         r.drive = drive.name;
-        r.path = "/" + drive.root + "/" + r.path;
-      });
+        r.path = window.path.join(
+          await window.gratitudeApi.getDrivePathById(drive.id),
+          r.path
+        );
+      }
       setShareEntry(res);
     });
   }, [refreshCount]);

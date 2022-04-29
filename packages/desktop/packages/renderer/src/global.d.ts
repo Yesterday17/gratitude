@@ -5,6 +5,7 @@ declare global {
     // Expose some Api through preload script
     gratitudeApi: import("../../preload/api").ApiClient;
     ipcRenderer: import("electron").IpcRenderer;
+    path: import("path");
     removeLoading: () => void;
   }
 }

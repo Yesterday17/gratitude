@@ -59,6 +59,11 @@ async function createWindow() {
       event.reply("api-response/drives", drives);
     });
   });
+  ipcMain.on("api-request/drivePath", (event, driveId) => {
+    db.getDrivePathById(driveId).then((path) => {
+      event.reply("api-response/drivePath", path);
+    });
+  });
 
   ipcMain.on("api-request/shares", (event) => {
     db.getShares().then((shares) => {
