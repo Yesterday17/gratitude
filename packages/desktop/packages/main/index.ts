@@ -4,6 +4,7 @@ import { join } from "path";
 import { main as startServer, db as database } from "@gratitude/server";
 import "./samples/electron-store";
 import "./samples/npm-esm-packages";
+import { SettingKey } from "@gratitude/server/dist/models/db";
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith("6.1")) app.disableHardwareAcceleration();
@@ -54,24 +55,23 @@ async function createWindow() {
   });
 
   // IPC 事件，加在这里
-  ipcMain.on("api-request/drives", (event) => {
-    db.getDrives().then((drives) => {
-      event.reply("api-response/drives", drives);
-    });
+  ipcMain.handle("api-request/drives", () => {
+    return db.getDrives();
   });
-  ipcMain.on("api-request/drivePath", (event, driveId) => {
-    db.getDrivePathById(driveId).then((path) => {
-      event.reply("api-response/drivePath", path);
+
+  ipcMain.handle("api-request/drivePath", (event, driveId) => {
+    return db.getDrivePathById(driveId).then((path) => {
+      return path;
     });
   });
 
-  ipcMain.on("api-request/shares", (event) => {
-    db.getShares().then((shares) => {
-      event.reply("api-response/shares", shares);
+  ipcMain.handle("api-request/shares", (event) => {
+    return db.getShares().then((shares) => {
+      return shares;
     });
   });
 
-  ipcMain.on(
+  ipcMain.handle(
     "api-request/add-share",
     (
       event,
@@ -81,15 +81,16 @@ async function createWindow() {
       files: string[],
       password?: string
     ) => {
-      db.createShare(driveId, path, strategy, files, password).then(() => {
-        event.reply("api-response/add-share");
-      });
+      return db.createShare(driveId, path, strategy, files, password);
     }
   );
+  ipcMain.handle("api-request/delete-share", (event, key: string) => {
+    return db.deleteShare(key);
+  });
 
-  ipcMain.on("api-request/delete-share", (event, key: string) => {
-    db.deleteShare(key).then(() => {
-      event.reply("api-response/delete-share");
+  ipcMain.handle("api-request/get-setting", (event, key: SettingKey) => {
+    return db.getSetting(key).then((value) => {
+      return value;
     });
   });
 }

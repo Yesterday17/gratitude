@@ -2,30 +2,15 @@ import { ipcRenderer } from "electron";
 
 export const ApiClient = {
   async getDrives() {
-    return new Promise((resolve) => {
-      ipcRenderer.send("api-request/drives");
-      ipcRenderer.once("api-response/drives", (event, drives) => {
-        resolve(drives);
-      });
-    });
+    return ipcRenderer.invoke("api-request/drives");
   },
 
   async getDrivePathById(id: number) {
-    return new Promise((resolve) => {
-      ipcRenderer.send("api-request/drivePath", id);
-      ipcRenderer.once("api-response/drivePath", (event, path) => {
-        resolve(path);
-      });
-    });
+    return ipcRenderer.invoke("api-request/drivePath", id);
   },
 
   async getShares() {
-    return new Promise((resolve) => {
-      ipcRenderer.send("api-request/shares");
-      ipcRenderer.once("api-response/shares", (event, drives) => {
-        resolve(drives);
-      });
-    });
+    return ipcRenderer.invoke("api-request/shares");
   },
 
   async createShare() {
@@ -36,20 +21,14 @@ export const ApiClient = {
       files: string[],
       password?: string
      */
-    return new Promise((resolve) => {
-      ipcRenderer.send("api-request/add-share", 1, "下载", 0, [], "");
-      ipcRenderer.once("api-response/add-share", () => {
-        resolve(void 0);
-      });
-    });
+    return ipcRenderer.invoke("api-request/add-share", 1, "下载", 0, [], "");
   },
 
   async deleteShare(key: string) {
-    return new Promise((resolve) => {
-      ipcRenderer.send("api-request/delete-share", key);
-      ipcRenderer.once("api-response/delete-share", () => {
-        resolve(void 0);
-      });
-    });
+    return ipcRenderer.invoke("api-request/delete-share", key);
+  },
+
+  async getSetting(key: string) {
+    return ipcRenderer.invoke("api-request/get-setting", key);
   },
 };

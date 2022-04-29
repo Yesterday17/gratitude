@@ -6,14 +6,32 @@ import {
   Radio,
   RadioChangeEvent,
 } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const SettingsPage = () => {
-  const [value, setValue] = useState(0);
+  const [password, setPassword] = useState("");
 
+  const [prefix, setPrefix] = useState("");
+  const [listen, setListen] = useState("0");
+
+  const [value, setValue] = useState(0);
   const onChange = (e: RadioChangeEvent) => {
     setValue(e.target.value);
   };
+
+  useEffect(() => {
+    (async () => {
+      await window.gratitudeApi
+        .getSetting("user_prefix")
+        .then((prefix: string) => setPrefix(prefix));
+      await window.gratitudeApi
+        .getSetting("listen")
+        .then((listen: string) => setListen(listen));
+      await window.gratitudeApi
+        .getSetting("delete_strategy")
+        .then((value: string) => setValue(parseInt(value) || 0));
+    })();
+  }, []);
 
   return (
     <PageHeader
@@ -26,16 +44,23 @@ export const SettingsPage = () => {
         </Button>,
       ]}
     >
-      <Descriptions size="small" column={2}>
+      <Descriptions size="small" column={1}>
         <Descriptions.Item label="登录密码">
-          <Input.Password size="small" />
+          <Input.Password
+            size="small"
+            placeholder="系统不保存明文密码，填写以修改密码"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+          />
         </Descriptions.Item>
-        <div></div>
 
         <Descriptions.Item label="监听地址">
-          <Input size="small" />
+          <Input
+            size="small"
+            value={listen}
+            onChange={(e) => setListen(e.target.value)}
+          />
         </Descriptions.Item>
-        <div></div>
 
         <Descriptions.Item label="删除策略">
           <Radio.Group onChange={onChange} value={value}>
@@ -43,12 +68,8 @@ export const SettingsPage = () => {
             <Radio value={1}>移动到回收站</Radio>
           </Radio.Group>
         </Descriptions.Item>
-        <div></div>
 
-        <Descriptions.Item label="系统前缀">
-          MgKq_VIb4BLr5hnxdkjzDw
-        </Descriptions.Item>
-        <div></div>
+        <Descriptions.Item label="系统前缀">{prefix}</Descriptions.Item>
       </Descriptions>
     </PageHeader>
   );
