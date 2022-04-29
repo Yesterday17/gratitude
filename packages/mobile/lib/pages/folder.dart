@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gratitude/global.dart';
+import 'package:gratitude/pages/transport.dart';
 import 'package:webdav_client/webdav_client.dart';
 import 'package:path/path.dart' as p;
 import 'package:hawk_fab_menu/hawk_fab_menu.dart';
@@ -31,7 +32,6 @@ class _FolderViewState extends State<FolderView> {
       final List<File> files = await Global.client.readDir(path);
       files.removeWhere((element) =>
           !showHiddenFiles ? element.name!.startsWith(".") : false);
-      print(path);
       if (path != "/") {
         files.insert(0, File(name: "..", isDir: true));
       }
@@ -52,25 +52,39 @@ class _FolderViewState extends State<FolderView> {
       items: [
         HawkFabMenuItem(
           label: '上传图片',
-          ontap: () {
-            AssetPicker.pickAssets(context).then((List<AssetEntity>? result) {
-              print(result);
-            });
-          },
           icon: const Icon(Icons.image),
+          ontap: () async {
+            try {
+              final result = await AssetPicker.pickAssets(context);
+              // 1. TODO: 上传
+              print(result);
+              // 2. 跳转到传输界面
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const TransportPage()));
+            } catch (e) {
+              // 忽略错误
+            }
+          },
         ),
         HawkFabMenuItem(
           label: '上传文件',
+          icon: const Icon(Icons.upload),
           ontap: () async {
-            FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-            if (result != null) {
-              print(result.files.single.path);
-            } else {
-              // User canceled the picker
+            try {
+              FilePickerResult? result = await FilePicker.platform.pickFiles();
+              if (result != null) {
+                // 1. TODO: 上传
+                print(result.files.single.path);
+                // 2. 跳转到传输界面
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const TransportPage()));
+              } else {
+                // 用户取消了选择
+              }
+            } catch (e) {
+              // 忽略错误
             }
           },
-          icon: const Icon(Icons.upload),
         ),
       ],
       body: ListView.builder(
