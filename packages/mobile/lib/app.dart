@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gratitude/pages/folder.dart';
 import 'package:gratitude/pages/settings.dart';
-import 'package:gratitude/pages/transport.dart';
+import 'package:gratitude/widgets/transfer_button.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -31,15 +30,8 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Gratitude"),
-        actions: [
-          IconButton(
-            icon: const Icon(CupertinoIcons.arrow_up_arrow_down),
-            onPressed: () {
-              // 跳转到传输界面
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const TransportPage()));
-            },
-          ),
+        actions: const [
+          TransferButton(),
         ],
       ),
       body: _widgetOptions.elementAt(_selectedIndex),

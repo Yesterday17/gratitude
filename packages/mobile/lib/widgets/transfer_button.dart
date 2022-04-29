@@ -1,0 +1,36 @@
+import 'package:badges/badges.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:gratitude/global.dart';
+import 'package:gratitude/models/transfer_item.dart';
+import 'package:gratitude/pages/transport.dart';
+
+class TransferButton extends StatefulWidget {
+  const TransferButton({Key? key}) : super(key: key);
+
+  @override
+  _TransferButtonState createState() => _TransferButtonState();
+}
+
+class _TransferButtonState extends State<TransferButton> {
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: Global.transferNotifier,
+      builder: (context, List<TransferItem> value, child) {
+        return Badge(
+          badgeContent: value.isEmpty ? null : Text("${value.length}"),
+          child: child,
+        );
+      },
+      child: IconButton(
+        icon: const Icon(CupertinoIcons.arrow_up_arrow_down),
+        onPressed: () {
+          // 跳转到传输界面
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const TransportPage()));
+        },
+      ),
+    );
+  }
+}

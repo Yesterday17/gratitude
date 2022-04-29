@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:gratitude/models/transfer_item.dart';
 import 'package:webdav_client/webdav_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -9,6 +11,8 @@ class Global {
   static String? server;
   static String? authKey;
   static String? authSecret;
+
+  static ValueNotifier<List<TransferItem>> transferNotifier = ValueNotifier([]);
 
   static Future<void> init() async {
     // 持久化配置
