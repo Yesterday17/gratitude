@@ -113,7 +113,8 @@ class _FolderViewState extends State<FolderView> {
                       readDir();
                     } else {
                       final filePath = p.normalize(p.join(path, item.name!));
-                      final transfer = TransferItem.download(item.name!);
+                      final transfer =
+                          TransferItem.download(item.name!, filePath);
                       Global.transferNotifier.add(transfer);
                       await Global.client.read2File(
                         filePath,

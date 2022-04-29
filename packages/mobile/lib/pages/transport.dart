@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gratitude/global.dart';
 import 'package:gratitude/services/transfer.dart';
+import 'package:open_file/open_file.dart';
 
 class TransportPage extends StatefulWidget {
   const TransportPage({Key? key}) : super(key: key);
@@ -22,6 +23,12 @@ class _TransportPageState extends State<TransportPage> {
           trailing: data[index].progress == 100
               ? const Icon(Icons.check)
               : Text("${data[index].progress}%"),
+          onTap: () {
+            if (data[index].isDone) {
+              // 已完成
+              OpenFile.open(data[index].path);
+            }
+          },
         );
       },
     );

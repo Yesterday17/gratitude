@@ -18,8 +18,9 @@ class _TransferButtonState extends State<TransferButton> {
     return ValueListenableBuilder<List<TransferItem>>(
       valueListenable: Global.transferNotifier,
       builder: (context, value, child) {
+        final length = value.where((element) => !element.isDone).length;
         return Badge(
-          badgeContent: value.isEmpty ? null : Text("${value.length}"),
+          badgeContent: length == 0 ? null : Text("$length"),
           child: child,
         );
       },
