@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gratitude/global.dart';
 import 'package:gratitude/pages/transport.dart';
+import 'package:gratitude/services/transfer.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:webdav_client/webdav_client.dart';
 import 'package:path/path.dart' as p;
 import 'package:hawk_fab_menu/hawk_fab_menu.dart';
@@ -105,12 +107,24 @@ class _FolderViewState extends State<FolderView> {
                       ? const Icon(Icons.folder)
                       : const Icon(Icons.insert_drive_file),
                   title: Text(item.name!),
-                  onTap: () {
+                  onTap: () async {
                     if (item.isDir!) {
                       path = p.normalize(p.join(path, item.name!));
                       readDir();
                     } else {
-                      // TODO: open file
+                      final filePath = p.normalize(p.join(path, item.name!));
+                      final transfer = TransferItem.download(item.name!);
+                      Global.transferNotifier.add(transfer);
+                      await Global.client.read2File(
+                        filePath,
+                        p.join(
+                          (await getExternalStorageDirectory())!.path,
+                          item.name!,
+                        ),
+                        onProgress: (count, total) {
+                          transfer.updateProgress(count * 100 ~/ total);
+                        },
+                      );
                     }
                   },
                 );

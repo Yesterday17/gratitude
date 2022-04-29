@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:gratitude/global.dart';
 
 class TransferItem {
@@ -27,8 +28,21 @@ class TransferItem {
 
   get isDone => progress == 100;
 
-  uploadProgress(int progress) {
+  updateProgress(int progress) {
     this.progress = progress;
-    Global.transferNotifier.notifyListeners();
+    Global.transferNotifier.update();
+  }
+}
+
+class TransferNotifier extends ValueNotifier<List<TransferItem>> {
+  TransferNotifier() : super([]);
+
+  add(TransferItem item) {
+    value.add(item);
+    notifyListeners();
+  }
+
+  update() {
+    notifyListeners();
   }
 }

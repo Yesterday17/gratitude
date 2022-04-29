@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gratitude/global.dart';
-import 'package:gratitude/models/transfer_item.dart';
+import 'package:gratitude/services/transfer.dart';
 
 class TransportPage extends StatefulWidget {
   const TransportPage({Key? key}) : super(key: key);
