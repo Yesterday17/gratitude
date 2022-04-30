@@ -44,6 +44,7 @@ const columns: TableColumnType<ShareEntry>[] = [
         </a>
         {!!record.password && (
           <a
+            key="copy-password"
             onClick={() => {
               //TODO: clipboard.writeText(record.password!);
             }}
@@ -52,6 +53,7 @@ const columns: TableColumnType<ShareEntry>[] = [
           </a>
         )}
         <a
+          key="delete"
           onClick={async () => {
             await window.gratitudeApi.deleteShare(record.key);
             // TODO: refresh list

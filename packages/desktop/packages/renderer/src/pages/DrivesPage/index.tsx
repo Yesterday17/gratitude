@@ -1,4 +1,12 @@
-import { Button, PageHeader, Space, TableColumnType, Table } from "antd";
+import {
+  Button,
+  PageHeader,
+  Space,
+  TableColumnType,
+  Table,
+  Drawer,
+} from "antd";
+import Dragger from "antd/lib/upload/Dragger";
 import { useEffect, useState } from "react";
 
 interface DriveRow {
@@ -30,6 +38,7 @@ const columns: TableColumnType<DriveRow>[] = [
     render: (text, record) => (
       <Space size="middle">
         <a
+          key="open"
           onClick={() => {
             //TODO: clipboard.writeText(record.url);
           }}
@@ -37,6 +46,7 @@ const columns: TableColumnType<DriveRow>[] = [
           打开目录
         </a>
         <a
+          key="delete"
           onClick={async () => {
             // await window.gratitudeApi.deleteShare(record.key);
             // TODO: refresh list
@@ -63,33 +73,73 @@ export const DrivesPage = () => {
     });
   }, [refreshCount]);
 
+  const [visible, setVisible] = useState(false);
+  const onClose = () => {
+    setVisible(false);
+  };
+
   return (
-    <PageHeader
-      className="site-page-header"
-      title="网盘管理"
-      subTitle="修改网盘列表"
-      extra={[
-        <Button
-          key="1"
-          onClick={() => {
-            setRefreshCount((r) => r + 1);
-          }}
-        >
-          刷新
-        </Button>,
-        <Button
-          key="2"
-          type="primary"
-          onClick={() => {
-            // TODO: Model & create
-            // window.gratitudeApi.createShare();
-          }}
-        >
-          添加
-        </Button>,
-      ]}
-    >
-      <Table columns={columns} dataSource={driveEntry} />
-    </PageHeader>
+    <div>
+      <PageHeader
+        className="site-page-header"
+        title="网盘管理"
+        subTitle="修改网盘列表"
+        extra={[
+          <Button
+            key="1"
+            onClick={() => {
+              setRefreshCount((r) => r + 1);
+            }}
+          >
+            刷新
+          </Button>,
+          <Button
+            key="2"
+            type="primary"
+            onClick={() => {
+              setVisible(true);
+            }}
+          >
+            添加
+          </Button>,
+        ]}
+      >
+        <Table columns={columns} dataSource={driveEntry} />
+      </PageHeader>
+      <Drawer
+        title="创建网盘"
+        placement="right"
+        // size="large"
+        onClose={onClose}
+        visible={visible}
+        extra={[
+          <Button
+            type="primary"
+            onClick={() => {
+              // add drive
+              setVisible(false);
+            }}
+          >
+            提交
+          </Button>,
+        ]}
+      >
+        <div key="dragger" style={{ height: "200px" }}>
+          <Dragger
+            multiple={false}
+            directory={true}
+            beforeUpload={(file) => {
+              console.log(file);
+              return false;
+            }}
+            customRequest={(options) => {
+              console.log(options.file);
+            }}
+          >
+            <p className="ant-upload-text">点击或拖曳以选中网盘目录</p>
+          </Dragger>
+        </div>
+      </Drawer>
+    </div>
   );
 };
