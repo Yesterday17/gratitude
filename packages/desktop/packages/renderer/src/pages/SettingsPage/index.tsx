@@ -26,9 +26,9 @@ export const SettingsPage = () => {
     window.gratitudeApi
       .getSetting("listen")
       .then((listen: string) => setListen(listen));
-    window.gratitudeApi
-      .getSetting("delete_strategy")
-      .then((value: string) => setValue(parseInt(value) || 0));
+    // window.gratitudeApi
+    //   .getSetting("delete_strategy")
+    //   .then((value: string) => setValue(parseInt(value) || 0));
   }, []);
 
   return (

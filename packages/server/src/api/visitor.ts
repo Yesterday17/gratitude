@@ -110,3 +110,5 @@ router.get("/file", async (req, res) => {
     res.json(err);
   }
 });
+
+router.use(express.static(path.join(__dirname, "../../public")));

@@ -6,6 +6,7 @@
     "packages/*"
   ],
   "scripts": {
+    "build": "lerna run build --stream --scope @gratitude/web && lerna run build --stream --scope @gratitude/server && lerna run build --stream --scope @gratitude/desktop",
     "dev:server": "lerna run start --stream --scope @gratitude/server",
     "dev:web": "lerna run dev --stream --scope @gratitude/web",
     "dev:desktop": "lerna run dev --stream --scope @gratitude/desktop",
