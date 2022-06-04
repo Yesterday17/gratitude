@@ -5,7 +5,25 @@ import { VisitorFileListRequest } from "../models/api";
 import { db } from "../services/db";
 import { decryptText, encrypt, encryptStream } from "../services/encrypt";
 
-export const router = express.Router();
+export async function visitorHandler(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) {
+  const path = req.path.split("/").at(1);
+  if (!path) {
+    res.end();
+  }
+  const database = await db;
+  const prefix = await database.getAllSharePrefix();
+  if (!prefix.includes(path)) {
+    res.end();
+  }
+  req.url = req.url.replace(`/${path}`, "");
+  router(req, res, next);
+}
+
+const router = express.Router();
 
 /**
  * 解密文件分享请求中的路径
