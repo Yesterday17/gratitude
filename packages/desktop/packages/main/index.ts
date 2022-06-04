@@ -98,15 +98,23 @@ async function createWindow() {
 
   ipcMain.handle(
     "api-request/add-share",
-    (
+    async (
       event,
-      driveId: number,
       path: string,
       strategy: number,
       files: string[],
       password?: string
     ) => {
-      return db.createShare(driveId, path, strategy, files, password);
+      const drive = await db.getDriveByPath(path);
+      if (drive) {
+        return db.createShare(
+          drive.id,
+          path.substring(drive.root.length),
+          strategy,
+          files,
+          password
+        );
+      }
     }
   );
   ipcMain.handle("api-request/delete-share", (event, key: string) => {

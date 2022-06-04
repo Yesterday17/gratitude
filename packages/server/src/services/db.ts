@@ -8,6 +8,7 @@ import {
   PartitionRow,
   SettingKey,
   ShareRow,
+  ShareRowResponse,
 } from "../models/db";
 import * as bcrypt from "bcrypt";
 import * as crypto from "crypto";
@@ -144,8 +145,12 @@ CREATE TABLE IF NOT EXISTS gr_settings(
   }
 
   // 获取分享的行
-  async getShare(key: string): Promise<ShareRow | undefined> {
-    return await this.db.get("SELECT * FROM gr_share WHERE key = ?", key);
+  async getShare(key: string): Promise<ShareRowResponse | undefined> {
+    const row = await this.db.get("SELECT * FROM gr_share WHERE key = ?", key);
+    return {
+      ...row,
+      files: JSON.parse(row.files),
+    };
   }
 
   /**
@@ -253,13 +258,18 @@ CREATE TABLE IF NOT EXISTS gr_settings(
   }
 
   // 获取分享列表
-  async getShares(): Promise<ShareRow[]> {
-    return await this.db.all("SELECT * FROM gr_share");
+  async getShares(): Promise<ShareRowResponse[]> {
+    const data: ShareRow[] = await this.db.all("SELECT * FROM gr_share");
+    return data.map((r) => ({
+      ...r,
+      files: JSON.parse(r.files),
+    }));
   }
 
   // 删除分享
   async deleteShare(key: string): Promise<void> {
     await this.db.run("DELETE FROM gr_share WHERE key = ?", key);
+    await this.db.run("DELETE FROM gr_share_prefix WHERE share_key = ?", key);
   }
 
   // 获取分享的前缀
@@ -277,6 +287,29 @@ CREATE TABLE IF NOT EXISTS gr_settings(
       "SELECT DISTINCT prefix FROM gr_share_prefix"
     );
     return rows.map((row) => row.prefix);
+  }
+
+  async getDriveByPath(localPath: string): Promise<DriveRow | undefined> {
+    const partitions = await this.getPartitions();
+    let par;
+    for (const partition of partitions) {
+      if (localPath.startsWith(partition.path)) {
+        par = partition;
+        localPath = localPath.substring(partition.path.length);
+        break;
+      }
+    }
+
+    if (par) {
+      let root = localPath.replace("^/", "").split("/")[0];
+      const data: DriveRow | undefined = await this.db.get(
+        "SELECT * FROM gr_drives WHERE partition = ? AND root = ?",
+        [par.id, root]
+      );
+      data.root = path.join(par.path, root);
+      return data;
+    }
+    return undefined;
   }
 
   async getDrivePathById(id: number): Promise<string | undefined> {

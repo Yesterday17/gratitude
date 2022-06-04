@@ -8,6 +8,16 @@ export interface ShareRow {
   files: string;
 }
 
+export interface ShareRowResponse {
+  id: number;
+  key: string;
+  password?: string;
+  drive_id: number;
+  path: string;
+  strategy: number;
+  files: string[];
+}
+
 export type SettingKey =
   | "password"
   | "listen"

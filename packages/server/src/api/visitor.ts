@@ -74,15 +74,34 @@ router.post("/list", async (req, res) => {
     }
 
     // 列目录
-    const files = await fs.readdir(p);
-    const result = files.map(async (file) => {
-      const filePath = path.join(p, file);
-      const stat = await fs.stat(filePath);
-      return {
-        name: file,
-        isFile: stat.isFile(),
-      };
-    });
+    let result = [];
+    if (share.strategy === 1) {
+      // whitelist
+      const prefixes = share.files.map((t) => t.split("/")[0]);
+      for (const prefix of prefixes) {
+        try {
+          const stat = await fs.stat(path.join(p, prefix));
+          result.push({
+            name: prefix,
+            isFile: stat.isFile(),
+          });
+        } catch {}
+      }
+    } else {
+      // all | blacklist
+      // TODO: blacklist
+      let blacklist = [];
+
+      const files = await fs.readdir(p);
+      result = files.map(async (file) => {
+        const filePath = path.join(p, file);
+        const stat = await fs.stat(filePath);
+        return {
+          name: file,
+          isFile: stat.isFile(),
+        };
+      });
+    }
 
     res.send(
       encrypt(password, {

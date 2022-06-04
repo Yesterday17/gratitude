@@ -1,7 +1,8 @@
+import type { DriveRow } from "@gratitude/server/dist/models/db";
 import { ipcRenderer } from "electron";
 
 export const ApiClient = {
-  async getDrives() {
+  async getDrives(): Promise<DriveRow[]> {
     return ipcRenderer.invoke("api-request/drives");
   },
 
@@ -13,15 +14,19 @@ export const ApiClient = {
     return ipcRenderer.invoke("api-request/shares");
   },
 
-  async createShare() {
-    /** TODO:
-      driveId: number,
-      path: string,
-      strategy: number,
-      files: string[],
-      password?: string
-     */
-    return ipcRenderer.invoke("api-request/add-share", 1, "下载", 0, [], "");
+  async createShare(
+    path: string,
+    strategy: number,
+    files: string[],
+    password?: string
+  ) {
+    return ipcRenderer.invoke(
+      "api-request/add-share",
+      path,
+      strategy,
+      files,
+      password
+    );
   },
 
   async deleteShare(key: string) {
