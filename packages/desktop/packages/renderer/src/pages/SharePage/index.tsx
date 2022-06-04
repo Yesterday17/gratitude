@@ -14,58 +14,6 @@ export interface ShareEntry {
   files: string[];
 }
 
-const columns: TableColumnType<ShareEntry>[] = [
-  {
-    title: "网盘",
-    dataIndex: "drive",
-    key: "drive",
-  },
-  {
-    title: "分享 ID",
-    dataIndex: "key",
-    key: "key",
-  },
-  {
-    title: "分享路径",
-    dataIndex: "path",
-    key: "path",
-  },
-  {
-    title: "动作",
-    key: "action",
-    render: (text, record) => (
-      <Space size="middle">
-        <a
-          onClick={() => {
-            //TODO: clipboard.writeText(record.url);
-          }}
-        >
-          复制链接
-        </a>
-        {!!record.password && (
-          <a
-            key="copy-password"
-            onClick={() => {
-              //TODO: clipboard.writeText(record.password!);
-            }}
-          >
-            复制密码
-          </a>
-        )}
-        <a
-          key="delete"
-          onClick={async () => {
-            await window.gratitudeApi.deleteShare(record.key);
-            // TODO: refresh list
-          }}
-        >
-          删除
-        </a>
-      </Space>
-    ),
-  },
-];
-
 export const SharePage = () => {
   // getShares
   const [shareEntry, setShareEntry] = useState<ShareEntry[]>([]);
@@ -88,6 +36,58 @@ export const SharePage = () => {
       setShareEntry(res);
     });
   }, [refreshCount]);
+
+  const columns: TableColumnType<ShareEntry>[] = [
+    {
+      title: "网盘",
+      dataIndex: "drive",
+      key: "drive",
+    },
+    {
+      title: "分享 ID",
+      dataIndex: "key",
+      key: "key",
+    },
+    {
+      title: "分享路径",
+      dataIndex: "path",
+      key: "path",
+    },
+    {
+      title: "动作",
+      key: "action",
+      render: (text, record) => (
+        <Space size="middle">
+          <a
+            onClick={() => {
+              //TODO: clipboard.writeText(record.url);
+            }}
+          >
+            复制链接
+          </a>
+          {!!record.password && (
+            <a
+              key="copy-password"
+              onClick={() => {
+                //TODO: clipboard.writeText(record.password!);
+              }}
+            >
+              复制密码
+            </a>
+          )}
+          <a
+            key="delete"
+            onClick={async () => {
+              await window.gratitudeApi.deleteShare(record.key);
+              setRefreshCount((r) => r + 1);
+            }}
+          >
+            删除
+          </a>
+        </Space>
+      ),
+    },
+  ];
 
   return (
     <PageHeader
