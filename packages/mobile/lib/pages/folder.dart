@@ -67,8 +67,25 @@ class _FolderViewState extends State<FolderView> {
                 ontap: () async {
                   try {
                     final result = await AssetPicker.pickAssets(context);
-                    // 1. TODO: 上传
-                    print(result);
+
+                    if (result != null) {
+                      // 1. 上传
+                      for (var image in result) {
+                        final file = await image.originFile;
+                        final name = p.basename(file!.path);
+                        final transfer = TransferItem.upload(name, file.path);
+                        Global.transferNotifier.add(transfer);
+
+                        Global.client.writeFromFile(
+                          file.path,
+                          '/' + name,
+                          onProgress: (count, total) {
+                            transfer.updateProgress(count * 100 ~/ total);
+                          },
+                        );
+                      }
+                    }
+
                     // 2. 跳转到传输界面
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => const TransportPage()));
@@ -85,8 +102,20 @@ class _FolderViewState extends State<FolderView> {
                     FilePickerResult? result =
                         await FilePicker.platform.pickFiles();
                     if (result != null) {
-                      // 1. TODO: 上传
-                      print(result.files.single.path);
+                      // 1. 上传
+                      for (final file in result.files) {
+                        final name = file.name;
+                        final transfer = TransferItem.upload(name, file.path!);
+                        Global.transferNotifier.add(transfer);
+
+                        Global.client.writeFromFile(
+                          file.path!,
+                          '/' + name,
+                          onProgress: (count, total) {
+                            transfer.updateProgress(count * 100 ~/ total);
+                          },
+                        );
+                      }
                       // 2. 跳转到传输界面
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => const TransportPage()));

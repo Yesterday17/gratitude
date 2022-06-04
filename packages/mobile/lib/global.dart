@@ -18,7 +18,7 @@ class Global {
     preferences = await SharedPreferences.getInstance();
 
     server = preferences.getString("server") ??
-        "http://192.168.1.9:3010/MgKq_VIb4BLr5hnxdkjzDw";
+        "http://192.168.1.49:3010/MgKq_VIb4BLr5hnxdkjzDw";
     authKey = preferences.getString("authKey") ?? "";
     authSecret = preferences.getString("authSecret") ?? "";
     const driveId = 1;
