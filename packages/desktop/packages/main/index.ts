@@ -1,4 +1,4 @@
-import { app, BrowserWindow, shell, ipcMain } from "electron";
+import { app, BrowserWindow, shell, ipcMain, Tray, Menu } from "electron";
 import { release } from "os";
 import { join } from "path";
 import { main as startServer, db as database } from "@gratitude/server";
@@ -23,6 +23,26 @@ async function createWindow() {
   await startServer();
   const db = await database;
 
+  const tray = new Tray(
+    "/home/yesterday17/Code/Graduation/gratitude/packages/desktop/resources/icon.png"
+  );
+  tray.setContextMenu(
+    Menu.buildFromTemplate([
+      {
+        label: "管理网盘",
+        click: () => {
+          win?.show();
+        },
+      },
+      {
+        label: "退出",
+        click: () => {
+          app.exit();
+        },
+      },
+    ])
+  );
+
   win = new BrowserWindow({
     title: "Main window",
     width: 1280,
@@ -31,6 +51,11 @@ async function createWindow() {
     webPreferences: {
       preload: join(__dirname, "../preload/index.cjs"),
     },
+  });
+
+  win.on("close", (evt) => {
+    evt.preventDefault();
+    win?.hide();
   });
 
   if (app.isPackaged) {
