@@ -40,7 +40,7 @@ const columns: TableColumnType<DriveRow>[] = [
         <a
           key="open"
           onClick={() => {
-            //TODO: clipboard.writeText(record.url);
+            require("electron").shell.showItemInFolder(record.root);
           }}
         >
           打开目录

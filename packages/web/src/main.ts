@@ -1,6 +1,7 @@
 // 导入
 import { Global } from "./global";
 import { listFolder, ListFolderResponse } from "./api/list";
+import { encryptPath } from "./utils/encrypt";
 
 function init() {
   const hash = window.location.hash;
@@ -109,7 +110,20 @@ function createListItem(name: string, isFolder = true) {
         alert(e);
       }
     } else {
-      // TODO: Download
+      fetch(
+        `file?path=${encodeURIComponent(
+          await encryptPath(Global.path + "/" + name)
+        )}&key=${Global.shareId}`
+      ).then((res) =>
+        res.blob().then((blob) => {
+          var a = document.createElement("a");
+          var url = window.URL.createObjectURL(blob);
+          a.href = url;
+          a.download = name;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        })
+      );
     }
   });
   return li;

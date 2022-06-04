@@ -86,7 +86,7 @@ router.get("/file", async (req, res) => {
 
   try {
     const { relativePath, share, password } = await decryptRequest(
-      req.params as VisitorFileListRequest
+      req.query as unknown as VisitorFileListRequest
     );
     const p = path.join(
       await database.getDrivePathById(share.drive_id),
@@ -104,7 +104,8 @@ router.get("/file", async (req, res) => {
     // 对文件进行加密
     const file = await fs.open(p, "r");
     const fileStream = file.createReadStream(/* TODO: range */);
-    encryptStream(password, fileStream).pipe(res);
+    fileStream.pipe(res);
+    // encryptStream(password, fileStream).pipe(res);
   } catch (err) {
     res.json(err);
   }
